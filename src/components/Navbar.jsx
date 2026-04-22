@@ -1,36 +1,45 @@
-import { Link, useLocation } from 'react-router-dom'
+import { Link } from 'react-router-dom'
+import { useEffect, useState } from 'react'
 
-function Navbar() {
-  const { pathname } = useLocation()
+export default function Navbar() {
+  const [scrolled, setScrolled] = useState(false)
 
-  const links = [
-    { to: '/', label: 'Home' },
-    { to: '/optimizer', label: 'Optimizer' },
-    { to: '/tracker', label: 'Job Tracker' },
-  ]
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20)
+    }
+
+    window.addEventListener("scroll", handleScroll)
+    return () => window.removeEventListener("scroll", handleScroll)
+  }, [])
 
   return (
-    <nav className="border-b border-white/10 px-6 py-4 flex items-center justify-between">
-      <span className="font-bold text-lg tracking-tight">
+    <nav
+      style={{ transform: "translateZ(0)" }} // 🔥 fixes flicker
+      className={`px-8 flex items-center justify-between sticky top-0 z-50 transition-all duration-300 ${
+        scrolled
+          ? "py-3 bg-[#0a0a0f]/95 backdrop-blur-xl shadow-md shadow-black/40"
+          : "py-4 bg-[#0a0a0f]"
+      }`}
+    >
+      {/* Logo */}
+      <Link
+        to="/"
+        className="font-semibold text-lg tracking-tight text-white hover:opacity-80 transition"
+      >
         Career<span className="text-violet-400">OS</span>
-      </span>
-      <div className="flex gap-6">
-        {links.map(l => (
-          <Link
-            key={l.to}
-            to={l.to}
-            className={`text-sm transition-colors ${
-              pathname === l.to
-                ? 'text-violet-400 font-semibold'
-                : 'text-gray-400 hover:text-white'
-            }`}
-          >
-            {l.label}
-          </Link>
-        ))}
-      </div>
+      </Link>
+
+      {/* CTA */}
+      <Link
+        to="/dashboard"
+        className="bg-gradient-to-r from-violet-600 to-pink-500 hover:from-violet-500 hover:to-pink-400 text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-violet-500/30 hover:scale-[1.03] active:scale-[0.97]"
+      >
+        Get Started →
+      </Link>
+
+      {/* 🔧 safety line (covers any 1px gap) */}
+      <div className="absolute bottom-0 left-0 w-full h-[1px] bg-[#0a0a0f]" />
     </nav>
   )
 }
-
-export default Navbar
