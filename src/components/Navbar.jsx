@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useEffect, useState } from 'react'
+import Button from './Button'
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
@@ -31,12 +32,7 @@ export default function Navbar() {
       </Link>
 
       {/* CTA */}
-      <Link
-        to="/dashboard"
-        className="bg-gradient-to-r from-violet-600 to-pink-500 hover:from-violet-500 hover:to-pink-400 text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-violet-500/30 hover:scale-[1.03] active:scale-[0.97]"
-      >
-        Get Started →
-      </Link>
+      <Button to="/dashboard">Get Started →</Button>
 
       {/* 🔧 safety line (covers any 1px gap) */}
       <div className="absolute bottom-0 left-0 w-full h-[1px] bg-[#0a0a0f]" />

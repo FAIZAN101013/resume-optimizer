@@ -3,6 +3,8 @@ import { Zap, ArrowRight, Sparkles } from 'lucide-react'
 import { motion } from "framer-motion"
 import FeatureCard from "../components/FeatureCard"
 import { FileEdit, BarChart2 } from "lucide-react"
+import Button from '../components/Button'
+
 
 export default function Home() {
   return (
@@ -49,20 +51,13 @@ export default function Home() {
 
         {/* Buttons */}
         <div className="flex items-center gap-4 flex-wrap justify-center">
-          <Link
-            to="/dashboard"
-            className="flex items-center gap-2 bg-gradient-to-r from-violet-600 to-pink-500 hover:from-violet-500 hover:to-pink-400 text-white font-semibold px-6 py-3 rounded-xl transition-all duration-300 hover:shadow-xl hover:shadow-violet-500/30 hover:-translate-y-1 hover:scale-[1.03] active:scale-[0.97]"
-          >
-            Start Optimizing Now
-            <ArrowRight className="w-4 h-4" />
-          </Link>
+          <Button to="/dashboard" size="lg">
+  Start Optimizing Now <ArrowRight className="w-4 h-4" />
+</Button>
 
-          <Link
-            to="/optimizer"
-            className="flex items-center gap-2 bg-white/[0.05] hover:bg-white/[0.08] border border-white/[0.08] backdrop-blur-md text-gray-300 font-semibold px-6 py-3 rounded-xl transition-all duration-300 hover:scale-[1.02]"
-          >
-            Try Optimizer
-          </Link>
+         <Button to="/optimizer" variant="secondary" size="lg">
+  Try Optimizer
+</Button>
         </div>
 
         {/* 🖥️ Dashboard Preview */}
@@ -127,12 +122,9 @@ export default function Home() {
           Stop guessing. Start optimizing. Land interviews faster.
         </p>
 
-        <Link
-          to="/dashboard"
-          className="bg-gradient-to-r from-violet-600 to-pink-500 px-6 py-3 rounded-xl font-semibold hover:scale-[1.03] transition"
-        >
-          Get Started Now →
-        </Link>
+       <Button to="/dashboard" size="lg">
+  Get Started Now →
+</Button>
       </section>
 
       {/* Footer */}

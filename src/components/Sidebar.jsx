@@ -31,7 +31,7 @@ export default function Sidebar() {
   const { pathname } = useLocation()
 
   return (
-    <div className="w-56 min-h-screen bg-[#0d0d14] border-r border-white/[0.06] flex flex-col py-5 px-3">
+    <div className="w-56 h-screen bg-[#0d0d14] border-r border-white/[0.06] flex flex-col py-5 px-3">
 
       {/* Brand */}
      <Logo />
