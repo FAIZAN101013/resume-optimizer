@@ -10,7 +10,7 @@ export default function Home() {
   return (
     <div className="relative min-h-screen bg-[#0a0a0f] text-white overflow-hidden">
 
-      {/* 🔥 Animated Background */}
+      {/* Animated Background */}
       <div className="absolute inset-0 -z-10">
         <div className="absolute top-[-200px] left-1/2 -translate-x-1/2 w-[700px] h-[700px] bg-violet-500/20 rounded-full blur-[140px] animate-pulse" />
         <div className="absolute bottom-[-200px] right-1/3 w-[600px] h-[600px] bg-pink-500/20 rounded-full blur-[140px] animate-pulse" />
@@ -60,7 +60,7 @@ export default function Home() {
 </Button>
         </div>
 
-        {/* 🖥️ Dashboard Preview */}
+        {/*  Dashboard Preview */}
         <div className="mt-20 w-full max-w-5xl">
           <div className="relative rounded-2xl border border-white/[0.08] bg-white/[0.03] backdrop-blur-xl shadow-2xl shadow-black/40 overflow-hidden">
 
