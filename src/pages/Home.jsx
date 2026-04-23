@@ -1,10 +1,10 @@
-import { Link } from 'react-router-dom'
-import { Zap, ArrowRight, FileEdit, BarChart2, Sparkles } from 'lucide-react'
+import { ArrowRight, FileEdit, BarChart2, Sparkles } from 'lucide-react'
 import { motion } from 'framer-motion'
 import FeatureCard from '../components/FeatureCard'
 import Button from '../components/Button'
 import Footer from '../components/home/Footer'
 import DashboardPreview from '../components/home/DashboardPreview'
+import AvatarStack from '../components/home/AvatarStack'
 
 const STATS = [
   { value: '3.2×', label: 'more interviews' },
@@ -12,12 +12,7 @@ const STATS = [
   { value: '94%',  label: 'ATS pass rate' },
 ]
 
-const AVATARS = [
-  { initials: 'AK', bg: 'bg-violet-700' },
-  { initials: 'JL', bg: 'bg-cyan-700' },
-  { initials: 'SR', bg: 'bg-pink-700' },
-  { initials: 'MT', bg: 'bg-emerald-900' },
-]
+
 
 const containerVariants = {
   hidden: {},
@@ -69,19 +64,7 @@ export default function Home() {
 
         {/* Social proof */}
         <motion.div variants={fadeUp} className="flex items-center gap-3 mb-10">
-          <div className="flex">
-            {AVATARS.map((av, i) => (
-              <div
-                key={av.initials}
-                className={`w-7 h-7 rounded-full border-2 border-[#0a0a0f] flex items-center justify-center text-[9px] font-medium ${av.bg} ${i > 0 ? '-ml-2' : ''}`}
-              >
-                {av.initials}
-              </div>
-            ))}
-          </div>
-          <p className="text-xs text-gray-500">
-            <span className="text-gray-300 font-medium">2,400+ professionals</span> optimized their careers this month
-          </p>
+          <AvatarStack />
         </motion.div>
 
         {/* CTAs — single primary, softer secondary */}
