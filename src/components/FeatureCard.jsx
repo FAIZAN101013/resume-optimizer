@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom"
 import { ArrowRight } from "lucide-react"
 
-// 🧠 Variant map — add any color here in future, no other changes needed
+
 const variants = {
   violet: {
     icon: "bg-violet-500/10 text-violet-400",

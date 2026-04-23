@@ -1,11 +1,18 @@
 import { useState } from 'react'
 import { initialJobs } from '../data/jobData'
 import Button from '../components/Button'
+import JobAddModal from '../components/modal/JobAddModal'
 
 const Tracker = () => {
 
-  // ✅ MUST be inside component
+  //  MUST be inside component
   const [jobs, setJobs] = useState(initialJobs)
+  
+  const [showModal, setShowModal] = useState(false)
+  
+    const handleAddJob = (job) => {
+  setJobs([job, ...jobs])
+}
 
   return (
     <div className="max-w-5xl mx-auto">
@@ -14,7 +21,7 @@ const Tracker = () => {
      <div className="flex items-center justify-between mb-6">
   <h1 className="text-2xl font-bold">Job Tracker</h1>
 
-  <Button>+ Add Job</Button>
+  <Button onClick={()=> setShowModal(true)}>+ Add Job</Button>
 </div>
       {/* Job List */}
       <div className="space-y-3">
@@ -40,6 +47,12 @@ const Tracker = () => {
           </div>
         ))}
       </div>
+      {showModal && (
+  <JobAddModal
+    onAdd={handleAddJob}
+    onClose={() => setShowModal(false)}
+  />
+)}
 
     </div>
   )
