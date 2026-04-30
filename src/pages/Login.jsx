@@ -44,7 +44,7 @@ const Login = () => {
     <AuthLayout>
       {" "}
       {/* Card */}
-      <div className="w-full z-10 max-w-sm">
+      <div className="w-full z-10 max-w-sm bg-white/[0.02] border border-white/[0.07] rounded-2xl p-8 backdrop-blur-sm">
         {/* Logo */}
         <Link to="/" className="flex items-center justify-center gap-2 mb-8">
           <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-violet-500 to-violet-700 flex items-center justify-center">
@@ -111,6 +111,14 @@ const Login = () => {
             onChange={(e) => set("password", e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
           />
+        </div>
+        <div className="flex justify-end mt-1">
+          <Link
+            to="/forgot-password"
+            className="text-xs text-gray-600 hover:text-violet-400 transition-colors"
+          >
+            Forgot password?
+          </Link>
         </div>
 
         {/* Error */}

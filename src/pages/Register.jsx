@@ -69,7 +69,7 @@ const Register = () => {
    return (
 
     <AuthLayout>
-      <div className="w-full max-w-sm">
+      <div className="w-full max-w-sm bg-white/[0.02] border border-white/[0.07] rounded-2xl p-8 backdrop-blur-sm">
 
         {/* Logo */}
         <Link to="/" className="flex items-center justify-center gap-2 mb-8">

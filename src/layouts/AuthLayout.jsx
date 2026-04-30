@@ -6,7 +6,8 @@ export default function AuthLayout({ children }) {
 
       <AuthBackground />
 
-      <div className="relative z-10 w-full max-w-sm">
+      <div className="relative z-10 w-full max-w-sm "
+      style={{ animation: "fadeUp 0.4s ease-out forwards" }}>
         {children}
       </div>
 
