@@ -4,6 +4,7 @@ import Home from './pages/Home'
 import Dashboard from './pages/Dashboard'
 import Optimizer from './pages/Optimizer'
 import Tracker from './pages/Tracker'
+import Login from './pages/Login'
 
 export default function App() {
   return (
@@ -13,6 +14,7 @@ export default function App() {
         <Route path="/dashboard" element={<Layout><Dashboard /></Layout>} />
         <Route path="/optimizer" element={<Layout><Optimizer /></Layout>} />
         <Route path="/tracker" element={<Layout><Tracker /></Layout>} />
+        <Route path="/login" element={<Login />} />
       </Routes>
     </BrowserRouter>
   )
