@@ -1,40 +1,47 @@
-import { Link, useLocation } from 'react-router-dom'
-import Logo from './Logo/Logo'
+import { Link, useLocation } from "react-router-dom";
+import Logo from "./Logo/Logo";
 import {
   LayoutDashboard,
   BarChart2,
   FileEdit,
   LifeBuoy,
   ChevronsUpDown,
-  Zap
-} from 'lucide-react'
+  Zap,
+} from "lucide-react";
+import { LogOut } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
 
 const links = [
   {
-    label: 'Dashboard',
-    to: '/dashboard',
+    label: "Dashboard",
+    to: "/dashboard",
     icon: LayoutDashboard,
   },
   {
-    label: 'Job Tracker',
-    to: '/tracker',
+    label: "Job Tracker",
+    to: "/tracker",
     icon: BarChart2,
   },
   {
-    label: 'Resume Optimizer',
-    to: '/optimizer',
+    label: "Resume Optimizer",
+    to: "/optimizer",
     icon: FileEdit,
   },
-]
+];
 
 export default function Sidebar() {
-  const { pathname } = useLocation()
+  const { pathname } = useLocation();
+
+  const { user, signOut } = useAuth();
+  const handleSignOut = async () => {
+    await signOut();
+    Navigate("/");
+  };
 
   return (
     <div className="w-56 h-screen bg-[#0d0d14] border-r border-white/[0.06] flex flex-col py-5 px-3">
-
       {/* Brand */}
-     <Logo />
+      <Logo />
 
       {/* Nav Links */}
       <div className="flex flex-col gap-0.5">
@@ -43,22 +50,22 @@ export default function Sidebar() {
         </p>
 
         {links.map(({ label, to, icon: Icon }) => {
-          const isActive = pathname === to
+          const isActive = pathname === to;
           return (
             <Link
               key={to}
               to={to}
               className={`group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-150 ${
                 isActive
-                  ? 'bg-violet-600/15 text-violet-300'
-                  : 'text-gray-500 hover:text-gray-200 hover:bg-white/[0.04]'
+                  ? "bg-violet-600/15 text-violet-300"
+                  : "text-gray-500 hover:text-gray-200 hover:bg-white/[0.04]"
               }`}
             >
               <Icon
                 className={`w-4 h-4 flex-shrink-0 transition-colors ${
                   isActive
-                    ? 'text-violet-400'
-                    : 'text-gray-600 group-hover:text-gray-300'
+                    ? "text-violet-400"
+                    : "text-gray-600 group-hover:text-gray-300"
                 }`}
                 strokeWidth={1.75}
               />
@@ -67,13 +74,12 @@ export default function Sidebar() {
                 <span className="ml-auto w-1.5 h-1.5 rounded-full bg-violet-400" />
               )}
             </Link>
-          )
+          );
         })}
       </div>
 
       {/* Bottom */}
       <div className="mt-auto flex flex-col gap-1 pt-4 border-t border-white/[0.06]">
-
         {/* Support */}
         <button className="group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-600 hover:text-gray-300 hover:bg-white/[0.04] transition-all duration-150">
           <LifeBuoy
@@ -84,35 +90,39 @@ export default function Sidebar() {
         </button>
 
         {/* User Card */}
-        <div className="mt-1 p-3 rounded-xl bg-gradient-to-br from-white/[0.04] to-white/[0.02] border border-white/[0.08] flex items-center gap-3 hover:border-violet-500/30 hover:bg-violet-500/[0.05] transition-all duration-200 cursor-pointer group">
-
-          {/* Avatar */}
-          <div className="relative flex-shrink-0">
-            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-violet-500 to-pink-500 flex items-center justify-center shadow-lg shadow-violet-500/20">
-              <span className="text-sm font-bold text-white">F</span>
+        <div className="mt-auto pt-4 border-t border-white/[0.06] flex flex-col gap-1">
+          <div className="mt-1 p-3 rounded-xl bg-gradient-to-br from-white/[0.04] to-white/[0.02] border border-white/[0.08] flex items-center gap-3 group">
+            {/* Avatar */}
+            <div className="relative flex-shrink-0">
+              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-violet-500 to-pink-500 flex items-center justify-center shadow-lg shadow-violet-500/20">
+                <span className="text-sm font-bold text-white">
+                  {user?.email?.[0].toUpperCase() || "U"}
+                </span>
+              </div>
+              <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-[#0d0d14]" />
             </div>
-            {/* Online dot */}
-            <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-[#0d0d14]" />
+
+            {/* Info */}
+            <div className="flex-1 min-w-0">
+              <div className="text-xs font-semibold text-gray-200 truncate">
+                {user?.email?.split("@")[0] || "User"}
+              </div>
+              <div className="text-[10px] text-gray-600 truncate mt-0.5">
+                {user?.email || ""}
+              </div>
+            </div>
+
+            {/* Sign out */}
+            <button
+              onClick={handleSignOut}
+              className="text-gray-700 hover:text-rose-400 transition-colors"
+              title="Sign out"
+            >
+              <LogOut className="w-3.5 h-3.5" strokeWidth={1.75} />
+            </button>
           </div>
-
-          {/* Info */}
-          <div className="flex-1 min-w-0">
-            <div className="text-xs font-semibold text-gray-200 truncate group-hover:text-white transition-colors">
-              Faizan Patel
-            </div>
-            <div className="text-[10px] text-gray-600 truncate mt-0.5">
-              faizan.m.patel10@gmail.com
-            </div>
-          </div>
-
-          <ChevronsUpDown
-            className="w-3.5 h-3.5 text-gray-700 group-hover:text-gray-400 flex-shrink-0 transition-colors"
-            strokeWidth={1.75}
-          />
         </div>
-
       </div>
-
     </div>
-  )
+  );
 }
