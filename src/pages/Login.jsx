@@ -7,7 +7,8 @@ import {Zap} from 'lucide-react'
 
 const Login = () => {
 
-    const {signIn ,signInWithGoogle} = useAuth();
+    
+    const { signIn, signInWithGoogle } = useAuth()
     const navigate = useNavigate();
 
     const [form ,setForm] = useState({email : '', password : ''})

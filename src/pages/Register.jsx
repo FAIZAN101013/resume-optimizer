@@ -5,6 +5,65 @@ import { useAuth } from '../context/AuthContext';
 import {Zap} from 'lucide-react'
 
 const Register = () => {
+  const { signUp, signInWithGoogle } = useAuth()
+  const navigate = useNavigate()
+
+  const [form, setForm] = useState({ email: '', password: '', confirm: '' })
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [success, setSuccess] = useState(false)
+
+  const set = (key, value) => setForm(prev => ({ ...prev, [key]: value }))
+
+  const handleSubmit = async () => {
+    setError('')
+
+    if (form.password !== form.confirm) {
+      setError('Passwords do not match')
+      return
+    }
+
+    if (form.password.length < 6) {
+      setError('Password must be at least 6 characters')
+      return
+    }
+
+    setLoading(true)
+    const { error } = await signUp(form.email, form.password)
+
+    if (error) {
+      setError(error.message)
+    } else {
+      setSuccess(true)
+    }
+    setLoading(false)
+  }
+
+  const handleGoogle = async () => {
+    const { error } = await signInWithGoogle()
+    if (error) setError(error.message)
+  }
+
+  const fieldCls = "w-full px-3 py-2.5 rounded-lg bg-white/[0.04] border border-white/[0.08] text-sm text-white placeholder-gray-600 focus:outline-none focus:border-violet-500/50 focus:bg-white/[0.06] transition-all duration-200"
+
+  if (success) {
+    return (
+      <div className="min-h-screen bg-[#0a0a0f] text-white flex items-center justify-center px-4">
+        <div className="text-center max-w-sm">
+          <div className="w-12 h-12 rounded-full bg-emerald-500/15 flex items-center justify-center mx-auto mb-4">
+            <span className="text-emerald-400 text-xl">✓</span>
+          </div>
+          <h2 className="text-xl font-bold mb-2">Check your email</h2>
+          <p className="text-gray-500 text-sm mb-6">
+            We sent a confirmation link to <span className="text-gray-300">{form.email}</span>
+          </p>
+          <Link to="/login" className="text-violet-400 text-sm hover:text-violet-300 transition-colors">
+            Back to login →
+          </Link>
+        </div>
+      </div>
+    )
+  }
    return (
     <div className="min-h-screen bg-[#0a0a0f] text-white flex items-center justify-center px-4">
       <div className="w-full max-w-sm">

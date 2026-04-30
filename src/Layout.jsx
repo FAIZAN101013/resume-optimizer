@@ -7,26 +7,29 @@ import Sidebar from './components/Sidebar'
 export default function Layout({ children }) {
   const { pathname } = useLocation()
   const isHome = pathname === '/'
-  const [showSidebar, setShowSidebar] = useState(!isHome)
+  const isAuth = pathname === '/login' || pathname === '/register'
+  const isPublic = isHome || isAuth
+
+  const [showSidebar, setShowSidebar] = useState(!isPublic)
   const [mobileOpen, setMobileOpen] = useState(false)
 
   useEffect(() => {
-    if (!isHome) {
+    if (!isPublic) {
       setTimeout(() => setShowSidebar(true), 10)
     } else {
       setShowSidebar(false)
     }
-  }, [isHome])
-  
+  }, [isPublic])
+
   useEffect(() => {
-  setMobileOpen(false)
-}, [pathname])
+    setMobileOpen(false)
+  }, [pathname])
 
   return (
     <div className="min-h-screen bg-[#0a0a0f] text-white flex">
 
       {/* Mobile Overlay */}
-      {!isHome && mobileOpen && (
+      {!isPublic && mobileOpen && (
         <div
           className="fixed inset-0 bg-black/50 z-40 lg:hidden"
           onClick={() => setMobileOpen(false)}
@@ -34,7 +37,7 @@ export default function Layout({ children }) {
       )}
 
       {/* Sidebar */}
-      {!isHome && (
+      {!isPublic && (
         <div
           className={`
             fixed top-0 left-0 h-screen z-50
@@ -49,11 +52,13 @@ export default function Layout({ children }) {
       )}
 
       {/* Main */}
-      <div className={`flex-1 flex flex-col min-w-0 ${!isHome ? 'lg:ml-56' : ''}`}>
+      <div className={`flex-1 flex flex-col min-w-0 ${!isPublic ? 'lg:ml-56' : ''}`}>
 
-        {isHome ? (
-          <Navbar />
-        ) : (
+        {/* Navbar — only on home */}
+        {isHome && <Navbar />}
+
+        {/* Mobile top bar — only on inner pages */}
+        {!isPublic && (
           <div className="lg:hidden flex items-center justify-between p-4 border-b border-white/[0.06]">
             <button onClick={() => setMobileOpen(true)}>
               <Menu className="w-5 h-5 text-gray-300" />
@@ -63,13 +68,13 @@ export default function Layout({ children }) {
           </div>
         )}
 
-        <main className={`flex-1 ${!isHome ? 'p-4 sm:p-6 lg:p-8' : ''}`}>
+        <main className={`flex-1 ${!isPublic ? 'p-4 sm:p-6 lg:p-8' : ''}`}>
           {children}
         </main>
       </div>
 
       {/* Close Button */}
-      {!isHome && mobileOpen && (
+      {!isPublic && mobileOpen && (
         <button
           onClick={() => setMobileOpen(false)}
           className="fixed top-4 right-4 z-50 lg:hidden"
