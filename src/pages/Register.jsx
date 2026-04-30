@@ -2,6 +2,8 @@ import React from 'react'
 import {useState} from 'react'
 import {Link , useNavigate} from 'react-router-dom'
 import { useAuth } from '../context/AuthContext';
+import AuthBackground from '../components/ui/AuthBackground';
+import AuthLayout from '../layouts/AuthLayout';
 import {Zap} from 'lucide-react'
 
 const Register = () => {
@@ -65,7 +67,8 @@ const Register = () => {
     )
   }
    return (
-    <div className="min-h-screen bg-[#0a0a0f] text-white flex items-center justify-center px-4">
+
+    <AuthLayout>
       <div className="w-full max-w-sm">
 
         {/* Logo */}
@@ -152,7 +155,8 @@ const Register = () => {
         </p>
 
       </div>
-    </div> 
+    </AuthLayout>
+    
   )
 }
 
