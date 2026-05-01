@@ -3,7 +3,7 @@ import { Download } from 'lucide-react'
 
 export default function TrackerHeader({ count, onAdd, onExport }) {
   return (
-    <div className="flex items-center justify-between mb-8">
+   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
       <div>
         <h1 className="text-2xl font-bold text-white">Job Tracker</h1>
         <p className="text-sm text-gray-500 mt-0.5">

@@ -9,10 +9,10 @@ export default function JobCard({ job, isStale, onClick, onDelete }) {
   return (
     <div
       onClick={onClick}
-      className="group p-4 rounded-xl bg-white/[0.02] border border-white/[0.06] hover:border-white/[0.1] hover:bg-white/[0.03] transition-all duration-200 flex items-center justify-between cursor-pointer"
+      className="group p-4 rounded-xl bg-white/[0.02] border border-white/[0.06] hover:border-white/[0.1] hover:bg-white/[0.03] transition-all duration-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 cursor-pointer"
     >
       {/* Left */}
-      <div className="flex items-center gap-3">
+      <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-3">
         <div className="w-9 h-9 rounded-lg bg-white/[0.06] flex items-center justify-center text-sm font-bold text-gray-300 flex-shrink-0">
           {job.company[0]}
         </div>
@@ -25,7 +25,7 @@ export default function JobCard({ job, isStale, onClick, onDelete }) {
       </div>
 
       {/* Right */}
-      <div className="flex items-center gap-3">
+      <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-3">
         <span
           className={`text-[11px] px-2.5 py-1 rounded-full border font-medium ${STATUS_BADGE[job.status]}`}
         >
@@ -36,7 +36,7 @@ export default function JobCard({ job, isStale, onClick, onDelete }) {
             Follow up
           </span>
         )}
-        <span className="text-xs text-gray-600 w-14 text-right">
+        <span className="text-xs text-gray-600 text-xs text-gray-600 sm:w-14 sm:text-right">
           {job.date}
         </span>
         <button
@@ -44,7 +44,7 @@ export default function JobCard({ job, isStale, onClick, onDelete }) {
             e.stopPropagation();
             onDelete(job.id);
           }}
-          className="opacity-0 group-hover:opacity-100 text-gray-700 hover:text-rose-400 transition-all duration-150 text-lg leading-none"
+          className="text-gray-700 hover:text-rose-400 transition-all duration-150 text-lg leading-none sm:opacity-0 sm:group-hover:opacity-100"
         >
           ×
         </button>

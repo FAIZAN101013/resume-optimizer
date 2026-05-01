@@ -7,7 +7,7 @@ const STATUS_CONFIG = {
 
 export default function StatsBar({ counts, activeFilter, onFilter }) {
   return (
-    <div className="grid grid-cols-4 gap-3 mb-6">
+    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
       {Object.entries(STATUS_CONFIG).map(([status, color]) => (
         <div
           key={status}

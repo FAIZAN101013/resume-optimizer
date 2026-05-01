@@ -26,7 +26,7 @@ export default function Layout({ children }) {
   }, [pathname])
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] text-white flex">
+    <div className="min-h-screen bg-[#0a0a0f] text-white flex overflow-x-hidden">
 
       {/* Mobile Overlay */}
       {!isPublic && mobileOpen && (
@@ -52,7 +52,7 @@ export default function Layout({ children }) {
       )}
 
       {/* Main */}
-      <div className={`flex-1 flex flex-col min-w-0 ${!isPublic ? 'lg:ml-56' : ''}`}>
+      <div className={`flex-1 flex flex-col min-w-0 ${!isPublic ? 'lg:ml-56 ml-0' : ''}`}>
 
         {/* Navbar — only on home */}
         {isHome && <Navbar />}
