@@ -100,6 +100,14 @@ export default function Tracker() {
   a.download = 'careeros-jobs.csv'
   a.click()
   URL.revokeObjectURL(url)
+
+
+  const isStale = (date) => {
+  if (!date) return false
+
+  const days = (new Date() - new Date(date)) / (1000 * 60 * 60 * 24)
+  return days > 5
+}
 }
   return (
     <div className="max-w-5xl mx-auto">
@@ -135,6 +143,7 @@ export default function Tracker() {
             <JobCard
               key={job.id}
               job={job}
+              isStale={job.status === 'Applied' && isStale(job.date)}
               onClick={() => { setSelectedJob(job); setModalMode('view') }}
               onDelete={handleDelete}
             />
