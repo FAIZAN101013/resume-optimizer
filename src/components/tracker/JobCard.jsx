@@ -25,7 +25,7 @@ export default function JobCard({ job, isStale, onClick, onDelete }) {
       </div>
 
       {/* Right */}
-      <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-3">
+      <div className="flex items-center gap-3">
         <span
           className={`text-[11px] px-2.5 py-1 rounded-full border font-medium ${STATUS_BADGE[job.status]}`}
         >

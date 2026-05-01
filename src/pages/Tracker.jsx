@@ -136,6 +136,8 @@ export default function Tracker() {
       const days = (new Date() - new Date(date)) / (1000 * 60 * 60 * 24);
       return days > 5;
     };
+
+    
   return (
     <div className="w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
       <TrackerHeader
