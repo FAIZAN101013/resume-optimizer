@@ -1,6 +1,7 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
+import Logo from '../Logo/Logo'
 
 
 const DashboardPreview = ({fadeUp}) => {
@@ -9,7 +10,7 @@ const DashboardPreview = ({fadeUp}) => {
         <motion.div variants={fadeUp} className="w-full max-w-5xl">
           <div
             role="img"
-            aria-label="CareerOS dashboard preview"
+            aria-label="Career Log dashboard preview"
             className="relative rounded-2xl border border-white/[0.08] bg-white/[0.03] backdrop-blur-xl shadow-2xl shadow-black/40 overflow-hidden"
           >
             {/* Window chrome */}
@@ -17,7 +18,10 @@ const DashboardPreview = ({fadeUp}) => {
               <div className="w-3 h-3 rounded-full bg-red-500/70" />
               <div className="w-3 h-3 rounded-full bg-yellow-500/70" />
               <div className="w-3 h-3 rounded-full bg-green-500/70" />
-              <span className="text-xs text-gray-600 ml-2">CareerOS — Dashboard</span>
+              <div className="ml-2 flex items-center gap-2">
+                <Logo compact showTagline={false} />
+                <span className="text-xs text-gray-600">— Dashboard</span>
+              </div>
             </div>
 
             {/* Mock content */}

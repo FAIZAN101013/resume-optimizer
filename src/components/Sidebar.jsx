@@ -40,7 +40,7 @@ export default function Sidebar() {
   return (
     <div className="w-56 h-screen bg-[#0d0d14] border-r border-white/[0.06] flex flex-col py-5 px-3">
       {/* Brand */}
-      <Logo />
+      <Logo className="px-3 mb-8" />
 
       {/* Nav Links */}
       <div className="flex flex-col gap-0.5">

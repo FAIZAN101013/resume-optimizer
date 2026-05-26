@@ -1,6 +1,6 @@
-import { Link } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import Button from './Button'
+import Logo from './Logo/Logo'
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
@@ -24,12 +24,7 @@ export default function Navbar() {
       }`}
     >
       {/* Logo */}
-      <Link
-        to="/"
-        className="font-semibold text-lg tracking-tight text-white hover:opacity-80 transition"
-      >
-        Career<span className="text-violet-400">OS</span>
-      </Link>
+      <Logo showTagline={false} textClassName="text-lg" />
 
       {/* CTA */}
       <Button to="/dashboard">Get Started →</Button>

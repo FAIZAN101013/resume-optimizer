@@ -2,9 +2,8 @@ import React from 'react'
 import {useState} from 'react'
 import {Link , useNavigate} from 'react-router-dom'
 import { useAuth } from '../context/AuthContext';
-import AuthBackground from '../components/ui/AuthBackground';
 import AuthLayout from '../layouts/AuthLayout';
-import {Zap} from 'lucide-react'
+import Logo from '../components/Logo/Logo';
 
 const Register = () => {
   const { signUp, signInWithGoogle } = useAuth()
@@ -72,12 +71,7 @@ const Register = () => {
       <div className="w-full max-w-sm bg-white/[0.02] border border-white/[0.07] rounded-2xl p-8 backdrop-blur-sm">
 
         {/* Logo */}
-        <Link to="/" className="flex items-center justify-center gap-2 mb-8">
-          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-violet-500 to-violet-700 flex items-center justify-center">
-            <Zap className="w-3.5 h-3.5 text-white fill-white" />
-          </div>
-          <span className="font-bold text-lg">Career<span className="text-violet-400">OS</span></span>
-        </Link>
+        <Logo showTagline={false} className="justify-center" textClassName="text-lg font-bold" />
 
         {/* Header */}
         <div className="text-center mb-8">

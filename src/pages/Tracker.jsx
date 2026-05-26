@@ -123,7 +123,7 @@ export default function Tracker() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "careeros-jobs.csv";
+    a.download = "career-log-jobs.csv";
     a.click();
     URL.revokeObjectURL(url);
 

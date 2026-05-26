@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { Menu, X } from 'lucide-react'
 import Navbar from './components/Navbar'
 import Sidebar from './components/Sidebar'
+import Logo from './components/Logo/Logo'
 
 export default function Layout({ children }) {
   const { pathname } = useLocation()
@@ -63,7 +64,7 @@ export default function Layout({ children }) {
             <button onClick={() => setMobileOpen(true)}>
               <Menu className="w-5 h-5 text-gray-300" />
             </button>
-            <span className="text-sm font-semibold">CareerOS</span>
+            <Logo compact showTagline={false} />
             <div className="w-5" />
           </div>
         )}
