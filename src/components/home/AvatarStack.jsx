@@ -12,14 +12,14 @@ export default function AvatarStack() {
         {AVATARS.map((av, i) => (
           <div
             key={av.initials}
-            className={`w-7 h-7 rounded-full border-2 border-[#0a0a0f] flex items-center justify-center text-[9px] font-medium ${av.bg} ${i > 0 ? '-ml-2' : ''}`}
+            className={`w-7 h-7 rounded-full border-2 border-white dark:border-[#0a0a0f] flex items-center justify-center text-[9px] font-medium text-white ${av.bg} ${i > 0 ? '-ml-2' : ''}`}
           >
             {av.initials}
           </div>
         ))}
       </div>
       <p className="text-xs text-gray-500">
-        <span className="text-gray-300 font-medium">2,400+ professionals</span> optimized their careers this month
+        <span className="text-gray-700 dark:text-gray-300 font-medium">2,400+ professionals</span> optimized their careers this month
       </p>
     </div>
   )

@@ -4,6 +4,7 @@ import DashboardHeader from '../components/dashboard/DashboardHeader'
 import StatsGrid from '../components/dashboard/StatsGrid'
 import QuickActions from '../components/dashboard/QuickActions'
 import RecentJobs from '../components/dashboard/RecentJobs'
+import ThemeToggle from '../components/ThemeToggle'
 
 export default function Dashboard() {
   const [jobs, setJobs] = useState([])
@@ -39,7 +40,10 @@ export default function Dashboard() {
 
   return (
     <div className="max-w-5xl mx-auto">
-      <DashboardHeader />
+      <div className="flex items-start justify-between gap-4 mb-2">
+        <DashboardHeader />
+        <ThemeToggle />
+      </div>
       <StatsGrid counts={counts} />
       <QuickActions jobCount={jobs.length} />
       <RecentJobs jobs={jobs.slice(0, 5)} />

@@ -10,7 +10,7 @@ export default function DashboardHeader() {
 
   return (
     <div className="mb-8">
-      <h1 className="text-2xl font-bold text-white mb-1">
+      <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
         Welcome back, {displayName}{" "}
         <span className="inline-block origin-bottom-right animate-wave">👋</span>
       </h1>

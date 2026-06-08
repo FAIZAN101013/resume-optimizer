@@ -166,12 +166,12 @@ export default function Tracker() {
 
       {/* Job List */}
       {loading ? (
-        <div className="text-center py-16 text-gray-600">
+        <div className="text-center py-16 text-gray-500 dark:text-gray-600">
           <div className="w-5 h-5 border-2 border-violet-500/30 border-t-violet-500 rounded-full animate-spin mx-auto mb-3" />
           <p className="text-sm">Loading jobs...</p>
         </div>
       ) : filteredJobs.length === 0 ? (
-        <div className="text-center py-16 text-gray-600">
+        <div className="text-center py-16 text-gray-500 dark:text-gray-600">
           <Briefcase
             className="w-8 h-8 mx-auto mb-3 opacity-30"
             strokeWidth={1.5}

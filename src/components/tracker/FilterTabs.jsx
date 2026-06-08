@@ -7,10 +7,10 @@ export default function FilterTabs({ activeFilter, onFilter, counts }) {
         <button
           key={f}
           onClick={() => onFilter(f)}
-          className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-150  whitespace-nowrap ${
+          className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-150 whitespace-nowrap ${
             activeFilter === f
-              ? 'bg-violet-600/20 text-violet-300 border border-violet-500/30'
-              : 'text-gray-500 hover:text-gray-300 hover:bg-white/[0.04] border border-transparent'
+              ? 'bg-violet-600/20 text-violet-700 dark:text-violet-300 border border-violet-500/30'
+              : 'text-gray-600 dark:text-gray-500 hover:text-gray-900 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/[0.04] border border-transparent'
           }`}
         >
           {f}

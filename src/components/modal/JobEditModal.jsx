@@ -8,11 +8,14 @@ const TABS = [
 ]
 
 const STATUS_OPTIONS = [
-  { key: 'Applied',   active: 'bg-violet-500/15 border-violet-500/50 text-violet-400' },
-  { key: 'Interview', active: 'bg-amber-500/10 border-amber-400/45 text-amber-300' },
-  { key: 'Offer',     active: 'bg-emerald-500/10 border-emerald-400/45 text-emerald-400' },
-  { key: 'Rejected',  active: 'bg-rose-500/10 border-rose-400/45 text-rose-400' },
+  { key: 'Applied',   active: 'bg-violet-500/15 border-violet-500/50 text-violet-700 dark:text-violet-400' },
+  { key: 'Interview', active: 'bg-amber-500/10 border-amber-400/45 text-amber-700 dark:text-amber-300' },
+  { key: 'Offer',     active: 'bg-emerald-500/10 border-emerald-400/45 text-emerald-700 dark:text-emerald-400' },
+  { key: 'Rejected',  active: 'bg-rose-500/10 border-rose-400/45 text-rose-700 dark:text-rose-400' },
 ]
+
+const STATUS_INACTIVE =
+  'border-gray-200 dark:border-white/[0.08] text-gray-500 dark:text-white/40 hover:text-gray-700 dark:hover:text-white/60 hover:border-gray-300 dark:hover:border-white/20'
 
 export default function JobEditModal({ job, onSave, onClose }) {
   const [tab, setTab]   = useState("basic")
@@ -34,45 +37,41 @@ export default function JobEditModal({ job, onSave, onClose }) {
   }
 
   const fieldCls =
-    "w-full px-3 py-2 rounded-lg bg-white/[0.04] border border-white/[0.08] text-sm text-white " +
-    "placeholder-white/30 focus:outline-none focus:border-white/30 focus:bg-white/[0.06] transition-colors"
+    "w-full px-3 py-2 rounded-lg bg-gray-50 dark:bg-white/[0.04] border border-gray-200 dark:border-white/[0.08] text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-white/30 focus:outline-none focus:border-violet-400 dark:focus:border-white/30 focus:bg-white dark:focus:bg-white/[0.06] transition-colors"
 
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4"
       onClick={e => e.target === e.currentTarget && onClose()}
     >
-      <div className="w-full max-w-[460px] bg-[#13131c] border border-white/[0.09] rounded-2xl p-6 shadow-2xl">
+      <div className="w-full max-w-[460px] bg-white dark:bg-[#13131c] border border-gray-200 dark:border-white/[0.09] rounded-2xl p-6 shadow-2xl text-gray-900 dark:text-white">
 
-        {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <div>
             <h2 className="text-[17px] font-medium tracking-tight">Edit application</h2>
-            <p className="text-[11px] text-white/25 mt-0.5">
+            <p className="text-[11px] text-gray-400 dark:text-white/25 mt-0.5">
               Step {tabIndex + 1} of {TABS.length}
             </p>
           </div>
           <button
             onClick={onClose}
-            className="w-7 h-7 rounded-full border border-white/10 text-white/50 hover:text-white/80
-                       hover:border-white/20 transition-colors flex items-center justify-center"
+            className="w-7 h-7 rounded-full border border-gray-200 dark:border-white/10 text-gray-500 dark:text-white/50 hover:text-gray-700 dark:hover:text-white/80 hover:border-gray-300 dark:hover:border-white/20 transition-colors flex items-center justify-center"
           >
             <span className="text-lg leading-none">×</span>
           </button>
         </div>
 
-        {/* Tab bar */}
-        <div className="flex gap-1 border-b border-white/[0.07] pb-3 mb-5">
+        <div className="flex gap-1 border-b border-gray-200 dark:border-white/[0.07] pb-3 mb-5">
           {TABS.map(({ key, label }, i) => (
             <button
               key={key}
               onClick={() => setTab(key)}
               className={`px-3 py-1.5 rounded-lg text-sm transition-all ${
                 tab === key
-                  ? "bg-violet-600/20 text-violet-300"
+                  ? "bg-violet-600/20 text-violet-700 dark:text-violet-300"
                   : i < tabIndex
-                  ? "text-white/50 hover:text-white/70"
-                  : "text-white/25 hover:text-white/40"
+                  ? "text-gray-600 dark:text-white/50 hover:text-gray-800 dark:hover:text-white/70"
+                  : "text-gray-400 dark:text-white/25 hover:text-gray-600 dark:hover:text-white/40"
               }`}
             >
               {i < tabIndex ? "✓ " : ""}{label}
@@ -83,14 +82,13 @@ export default function JobEditModal({ job, onSave, onClose }) {
               <div
                 key={i}
                 className={`h-1 rounded-full transition-all duration-300 ${
-                  i <= tabIndex ? "w-5 bg-violet-500" : "w-2 bg-white/[0.1]"
+                  i <= tabIndex ? "w-5 bg-violet-500" : "w-2 bg-gray-200 dark:bg-white/[0.1]"
                 }`}
               />
             ))}
           </div>
         </div>
 
-        {/* ── Tab: Basic ── */}
         {tab === "basic" && (
           <Section label="Position">
             <div className="grid grid-cols-2 gap-2.5">
@@ -130,14 +128,13 @@ export default function JobEditModal({ job, onSave, onClose }) {
                 value={form.jobDescription || ''}
                 onChange={e => set('jobDescription', e.target.value)}
               />
-              <p className="text-[11px] text-white/20 mt-1">
+              <p className="text-[11px] text-gray-400 dark:text-white/20 mt-1">
                 Optional — helps generate tailored follow-up emails
               </p>
             </div>
           </Section>
         )}
 
-        {/* ── Tab: Details ── */}
         {tab === "details" && (
           <div className="space-y-4">
             <Section label="Status">
@@ -147,9 +144,7 @@ export default function JobEditModal({ job, onSave, onClose }) {
                     key={key}
                     onClick={() => set('status', key)}
                     className={`py-1.5 rounded-lg border text-xs font-medium transition-all ${
-                      form.status === key
-                        ? active
-                        : 'border-white/[0.08] text-white/40 hover:text-white/60 hover:border-white/20'
+                      form.status === key ? active : STATUS_INACTIVE
                     }`}
                   >
                     {key}
@@ -161,15 +156,14 @@ export default function JobEditModal({ job, onSave, onClose }) {
             <Divider />
 
             <Section label="Referral">
-              <label className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-white/[0.03]
-                                border border-white/[0.08] cursor-pointer hover:bg-white/[0.05] transition-colors">
+              <label className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-gray-50 dark:bg-white/[0.03] border border-gray-200 dark:border-white/[0.08] cursor-pointer hover:bg-gray-100 dark:hover:bg-white/[0.05] transition-colors">
                 <input
                   type="checkbox"
                   className="w-4 h-4 accent-violet-500 cursor-pointer"
                   checked={form.isReferral || false}
                   onChange={e => set('isReferral', e.target.checked)}
                 />
-                <span className="text-sm text-white/50">This application came through a referral</span>
+                <span className="text-sm text-gray-600 dark:text-white/50">This application came through a referral</span>
               </label>
               {form.isReferral && (
                 <input
@@ -184,7 +178,6 @@ export default function JobEditModal({ job, onSave, onClose }) {
           </div>
         )}
 
-        {/* ── Tab: Notes ── */}
         {tab === "notes" && (
           <Section label="Notes">
             <textarea
@@ -194,14 +187,13 @@ export default function JobEditModal({ job, onSave, onClose }) {
               value={form.notes || ''}
               onChange={e => set('notes', e.target.value)}
             />
-            <p className="text-[11px] text-white/20 mt-1">
+            <p className="text-[11px] text-gray-400 dark:text-white/20 mt-1">
               Optional — saved with your application for reference
             </p>
           </Section>
         )}
 
-        {/* Footer */}
-        <div className="flex gap-2 justify-between pt-5 mt-2 border-t border-white/[0.06]">
+        <div className="flex gap-2 justify-between pt-5 mt-2 border-t border-gray-200 dark:border-white/[0.06]">
           <div>
             {!isFirst && (
               <Button variant="secondary" onClick={handleBack}>← Back</Button>
@@ -224,12 +216,12 @@ export default function JobEditModal({ job, onSave, onClose }) {
 function Section({ label, children }) {
   return (
     <div>
-      <p className="text-[11px] font-medium text-white/35 tracking-widest uppercase mb-2">{label}</p>
+      <p className="text-[11px] font-medium text-gray-500 dark:text-white/35 tracking-widest uppercase mb-2">{label}</p>
       {children}
     </div>
   )
 }
 
 function Divider() {
-  return <hr className="border-white/[0.07] my-1" />
+  return <hr className="border-gray-200 dark:border-white/[0.07] my-1" />
 }

@@ -27,7 +27,15 @@ export default function Layout({ children }) {
   }, [pathname])
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] text-white flex overflow-x-hidden">
+    <div
+  className="
+    min-h-screen flex overflow-x-hidden
+    bg-white text-gray-900
+    dark:bg-[#0a0a0f]
+    dark:text-white
+    transition-colors duration-300
+  "
+>
 
       {/* Mobile Overlay */}
       {!isPublic && mobileOpen && (
@@ -60,9 +68,9 @@ export default function Layout({ children }) {
 
         {/* Mobile top bar — only on inner pages */}
         {!isPublic && (
-          <div className="lg:hidden flex items-center justify-between p-4 border-b border-white/[0.06]">
+          <div className="lg:hidden flex items-center justify-between p-4 border-b border-gray-200 dark:border-white/[0.06]">
             <button onClick={() => setMobileOpen(true)}>
-              <Menu className="w-5 h-5 text-gray-300" />
+              <Menu className="w-5 h-5 text-gray-700 dark:text-gray-300" />
             </button>
             <Logo compact showTagline={false} />
             <div className="w-5" />
@@ -80,7 +88,7 @@ export default function Layout({ children }) {
           onClick={() => setMobileOpen(false)}
           className="fixed top-4 right-4 z-50 lg:hidden"
         >
-          <X className="w-5 h-5 text-white" />
+          <X className="w-5 h-5 text-gray-900 dark:text-white" />
         </button>
       )}
     </div>

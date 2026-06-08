@@ -23,14 +23,14 @@ export default function Logo({
 
       <div className="leading-tight">
         <div
-          className={`text-white font-semibold tracking-tight ${
+          className={`text-gray-900 dark:text-white font-semibold tracking-tight ${
             compact ? "text-xs" : "text-sm"
           } ${textClassName}`}
         >
-          Career <span className="text-violet-400">Log</span>
+          Career <span className="text-violet-600 dark:text-violet-400">Log</span>
         </div>
         {showTagline && (
-          <div className="text-gray-400 text-[11px] mt-0.5 group-hover:text-gray-300 transition">
+          <div className="text-gray-500 dark:text-gray-400 text-[11px] mt-0.5 group-hover:text-gray-700 dark:group-hover:text-gray-300 transition">
             Elite Career Suite
           </div>
         )}

@@ -17,8 +17,8 @@ export default function Button({
 
   const variants = {
     primary: 'bg-gradient-to-r from-violet-600 to-pink-500 hover:from-violet-500 hover:to-pink-400 text-white hover:shadow-lg hover:shadow-violet-500/30',
-    secondary: 'bg-white/[0.05] hover:bg-white/[0.08] border border-white/[0.08] backdrop-blur-md text-gray-300',
-    ghost: 'text-gray-400 hover:text-white hover:bg-white/[0.04]',
+    secondary: 'bg-gray-100 hover:bg-gray-200 border border-gray-200 text-gray-700 dark:bg-white/[0.05] dark:hover:bg-white/[0.08] dark:border-white/[0.08] dark:backdrop-blur-md dark:text-gray-300',
+    ghost: 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/[0.04]',
   }
 
   const base = `inline-flex items-center gap-2 font-semibold rounded-xl transition-all duration-300 hover:scale-[1.03] active:scale-[0.97] ${sizes[size]} ${variants[variant]} ${className}`
