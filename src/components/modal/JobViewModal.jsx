@@ -175,7 +175,7 @@ export default function JobViewModal({ job, onClose, onEdit }) {
  
           {/* AI Email */}
           {tab === "email" && (
-            <div className="space-y-4">
+            <div className="space-y-4 scrollbar-none overflow-y-auto">
               <div>
                 <p className="text-[11px] font-medium text-white/35 tracking-widest uppercase mb-2">Email type</p>
                 <div className="flex gap-2">
@@ -206,7 +206,8 @@ export default function JobViewModal({ job, onClose, onEdit }) {
                 disabled={loading}
                 className="w-full py-2.5 rounded-lg border border-violet-500/30 bg-violet-500/10 text-violet-300
                            text-sm font-medium hover:bg-violet-500/15 hover:border-violet-500/50
-                           transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                           transition-all disabled:opacity-50 flex items-center justify-center gap-2
+                           "
               >
                 {loading ? (
                   <>
