@@ -32,10 +32,10 @@ export default function Sidebar() {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
 
-  const handleSignOut = async () => {
-    await signOut();
-    navigate("/");
-  };
+ const handleSignOut = async () => {
+  await signOut();
+  window.location.replace("/");
+};
 
   return (
     <div
