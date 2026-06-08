@@ -21,27 +21,21 @@ const EMAIL_TYPES = [
   { key: 'withdrawn', label: 'Withdraw' },
 ]
 
+// ── calls your Vercel API route → Gemini (no API key exposed in browser) ──
 async function generateEmail({ type, job }) {
-  const prompts = {
-    followup:  `Write a short professional follow-up email to a recruiter at ${job.company} for the ${job.role} role I applied for on ${job.date}. 3–4 sentences, friendly but not pushy. Sign off as [Your Name].`,
-    thankyou:  `Write a concise thank-you email to the interviewer at ${job.company} for the ${job.role} role. Express genuine interest. 3–4 sentences. Sign off as [Your Name].`,
-    withdrawn: `Write a polite brief email to ${job.company} withdrawing my application for the ${job.role} position. Warm and professional. Sign off as [Your Name].`,
-  }
-  const jdContext = job.jobDescription
-    ? `\n\nJob description context (for personalisation):\n${job.jobDescription.slice(0, 800)}`
-    : ''
-
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 1000,
-      messages: [{ role: 'user', content: prompts[type] + jdContext + '\n\nReturn only the email body. No subject line, no preamble, no markdown.' }],
-    }),
+  const res = await fetch("/api/generate-email", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ type, job }),
   })
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}))
+    throw new Error(err.error || "Failed to generate email")
+  }
+
   const data = await res.json()
-  return data.content?.[0]?.text ?? 'Failed to generate — please try again.'
+  return data.email ?? "Failed to generate — please try again."
 }
 
 export default function JobViewModal({ job, onClose, onEdit }) {
@@ -50,12 +44,16 @@ export default function JobViewModal({ job, onClose, onEdit }) {
   const [draft, setDraft]     = useState('')
   const [loading, setLoading] = useState(false)
   const [copied, setCopied]   = useState(false)
+  const [error, setError]     = useState('')
 
   const handleGenerate = async () => {
     setLoading(true)
     setDraft('')
+    setError('')
     try {
       setDraft(await generateEmail({ type: emailType, job }))
+    } catch (err) {
+      setError(err.message || 'Something went wrong — please try again.')
     } finally {
       setLoading(false)
     }
@@ -118,10 +116,10 @@ export default function JobViewModal({ job, onClose, onEdit }) {
           ))}
         </div>
 
-        {/* ── Tab content (scrollable) ── */}
+        {/* ── Tab content ── */}
         <div className="flex-1 overflow-y-auto p-6 space-y-4">
 
-          {/* Overview tab */}
+          {/* Overview */}
           {tab === "overview" && (
             <>
               <div className="grid grid-cols-2 gap-3">
@@ -143,46 +141,44 @@ export default function JobViewModal({ job, onClose, onEdit }) {
             </>
           )}
 
-          {/* JD tab */}
+          {/* Job description */}
           {tab === "jd" && (
-            job.jobDescription
-              ? (
-                <div>
-                  <div className="flex items-center gap-1.5 text-[11px] text-gray-600 uppercase tracking-widest font-medium mb-3">
-                    <FileText className="w-3 h-3" /> Job description
-                  </div>
-                  <p className="text-sm text-gray-400 leading-relaxed whitespace-pre-wrap bg-white/[0.02] border border-white/[0.06] rounded-lg px-3 py-2.5">
-                    {job.jobDescription}
-                  </p>
+            job.jobDescription ? (
+              <div>
+                <div className="flex items-center gap-1.5 text-[11px] text-gray-600 uppercase tracking-widest font-medium mb-3">
+                  <FileText className="w-3 h-3" /> Job description
                 </div>
-              ) : (
-                <div className="flex flex-col items-center justify-center py-10 text-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-white/[0.04] border border-white/[0.06] flex items-center justify-center">
-                    <FileText className="w-4 h-4 text-white/20" />
-                  </div>
-                  <p className="text-sm text-white/30">No job description saved</p>
-                  <p className="text-xs text-white/20">Edit this application to paste one in — it improves AI email quality.</p>
-                  <button
-                    onClick={onEdit}
-                    className="mt-1 text-xs text-violet-400 border border-violet-500/30 px-3 py-1.5 rounded-lg hover:bg-violet-500/10 transition-colors"
-                  >
-                    Add job description →
-                  </button>
+                <p className="text-sm text-gray-400 leading-relaxed whitespace-pre-wrap bg-white/[0.02] border border-white/[0.06] rounded-lg px-3 py-2.5">
+                  {job.jobDescription}
+                </p>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-10 text-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-white/[0.04] border border-white/[0.06] flex items-center justify-center">
+                  <FileText className="w-4 h-4 text-white/20" />
                 </div>
-              )
+                <p className="text-sm text-white/30">No job description saved</p>
+                <p className="text-xs text-white/20">Edit this application to paste one in — it improves AI email quality.</p>
+                <button
+                  onClick={onEdit}
+                  className="mt-1 text-xs text-violet-400 border border-violet-500/30 px-3 py-1.5 rounded-lg hover:bg-violet-500/10 transition-colors"
+                >
+                  Add job description →
+                </button>
+              </div>
+            )
           )}
 
-          {/* AI Email tab */}
+          {/* AI Email */}
           {tab === "email" && (
             <div className="space-y-4">
-              {/* Type selector */}
               <div>
                 <p className="text-[11px] font-medium text-white/35 tracking-widest uppercase mb-2">Email type</p>
                 <div className="flex gap-2">
                   {EMAIL_TYPES.map(({ key, label }) => (
                     <button
                       key={key}
-                      onClick={() => { setType(key); setDraft('') }}
+                      onClick={() => { setType(key); setDraft(''); setError('') }}
                       className={`flex-1 py-2 rounded-lg border text-xs font-medium transition-all ${
                         emailType === key
                           ? 'bg-violet-500/15 border-violet-500/40 text-violet-300'
@@ -195,14 +191,12 @@ export default function JobViewModal({ job, onClose, onEdit }) {
                 </div>
               </div>
 
-              {/* Context hint */}
               <p className="text-xs text-white/25">
                 {job.jobDescription
                   ? '✓ JD detected — email will be personalised to the role.'
                   : 'No JD — email uses company & role name only. Add one via the Job description tab for better results.'}
               </p>
 
-              {/* Generate */}
               <button
                 onClick={handleGenerate}
                 disabled={loading}
@@ -223,7 +217,14 @@ export default function JobViewModal({ job, onClose, onEdit }) {
                 )}
               </button>
 
-              {/* Draft */}
+              {/* Error state */}
+              {error && (
+                <div className="px-3 py-2.5 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs">
+                  {error}
+                </div>
+              )}
+
+              {/* Draft output */}
               {draft && (
                 <div className="relative">
                   <textarea
