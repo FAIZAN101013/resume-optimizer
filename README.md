@@ -1,16 +1,94 @@
-# React + Vite
+# Career Log
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Career Log is a modern career management platform designed to help job seekers organize applications, track progress, and streamline their job search process.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+### Job Tracker
 
-## React Compiler
+* Track job applications in one place
+* Monitor application status (Applied, Interview, Offer, Rejected)
+* Search and filter applications
+* Export application data to CSV
+* Application notes and details
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### AI Email Assistant
 
-## Expanding the ESLint configuration
+Generate professional:
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+* Follow-up emails
+* Thank-you emails
+* Application withdrawal emails
+
+### Authentication
+
+* Email & Password authentication
+* Google Sign-In
+* Protected routes
+* Persistent login sessions
+
+### User Experience
+
+* Dark & Light mode
+* Responsive design
+* Modern dashboard interface
+* Clean and intuitive workflow
+
+## Tech Stack
+
+* React
+* Vite
+* Tailwind CSS
+* Supabase
+* React Router
+* Lucide Icons
+
+## Screenshots
+
+### Landing Page
+
+![Landing Page](https://drive.google.com/uc?export=view&id=12khqE-k5QUol8emUBJDUX6Tx9NfuC_gg)
+
+### Job Tracker
+
+![Job Tracker](https://drive.google.com/uc?export=view&id=1j2uYJ4NUuw6NPwoCVhwL3vPq30HPOtFS)
+
+### AI Email Assistant
+
+![AI Email Assistant](https://drive.google.com/uc?export=view&id=1Gkx29ZLX1tA53b0plbrVF4l_ruU8Y76s)
+
+## Installation
+
+```bash
+git clone https://github.com/FAIZAN101013/resume-optimizer.git
+cd resume-optimizer
+npm install
+npm run dev
+```
+
+## Environment Variables
+
+Create a `.env` file:
+
+```env
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+## Live Demo
+
+https://resume-optimizer-topaz-eight.vercel.app/
+
+## Roadmap
+
+* Calendar & interview scheduling
+* Application analytics
+* AI-powered career insights
+* Resume optimization improvements
+* Productivity tools for job seekers
+
+## Author
+
+Mohammed Faizan Patel
+
+LinkedIn: https://www.linkedin.com/in/mohammed-faizan-patel/
