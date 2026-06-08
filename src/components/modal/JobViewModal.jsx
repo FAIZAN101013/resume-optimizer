@@ -121,7 +121,7 @@ export default function JobViewModal({ job, onClose, onEdit }) {
         </div>
  
         {/* ── Tab content ── */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-4">
+        <div className="flex-1 overflow-y-auto p-6 space-y-4 scrollbar-none">
  
           {/* Overview */}
           {tab === "overview" && (
@@ -175,7 +175,7 @@ export default function JobViewModal({ job, onClose, onEdit }) {
  
           {/* AI Email */}
           {tab === "email" && (
-            <div className="space-y-4 scrollbar-none overflow-y-auto">
+            <div className="space-y-4 ">
               <div>
                 <p className="text-[11px] font-medium text-white/35 tracking-widest uppercase mb-2">Email type</p>
                 <div className="flex gap-2">
