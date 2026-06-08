@@ -55,11 +55,44 @@ export default async function handler(req, res) {
 
     console.log("Gemini Response:", responseText);
 
-    if (!response.ok) {
-      return res.status(response.status).json({
-        error: responseText,
-      });
-    }
+   if (!response.ok) {
+  console.error("Gemini Error:", responseText);
+
+  const fallbackEmails = {
+    followup: `Hi,
+
+I hope you're doing well. I wanted to follow up regarding my application for the ${job.role} position at ${job.company}.
+
+I remain very interested in the opportunity and would appreciate any update regarding the hiring process.
+
+Thank you for your time and consideration.
+
+Best regards,
+[Your Name]`,
+
+    thankyou: `Hi,
+
+Thank you for taking the time to interview me for the ${job.role} position at ${job.company}.
+
+I enjoyed learning more about the role and remain very excited about the opportunity to contribute to your team.
+
+Best regards,
+[Your Name]`,
+
+    withdrawn: `Hi,
+
+Thank you for considering my application for the ${job.role} position at ${job.company}.
+
+After careful consideration, I would like to withdraw my application. I appreciate your time and wish your team continued success.
+
+Best regards,
+[Your Name]`,
+  };
+
+  return res.status(200).json({
+    email: fallbackEmails[type] || "Unable to generate email.",
+  });
+}
 
     const data = JSON.parse(responseText);
 
