@@ -6,9 +6,11 @@ import QuickActions from '../components/dashboard/QuickActions'
 import RecentJobs from '../components/dashboard/RecentJobs'
 import ThemeToggle from '../components/ThemeToggle'
 
+
 export default function Dashboard() {
   const [jobs, setJobs] = useState([])
   const [loading, setLoading] = useState(true)
+  const [selectedDate, setSelectedDate] = useState(new Date())
 
   useEffect(() => {
     const fetchJobs = async () => {
@@ -45,8 +47,11 @@ export default function Dashboard() {
         <ThemeToggle />
       </div>
       <StatsGrid counts={counts} />
-      <QuickActions jobCount={jobs.length} />
-      <RecentJobs jobs={jobs.slice(0, 5)} />
+     <QuickActions jobCount={jobs.length} />
+
+
+
+<RecentJobs jobs={jobs.slice(0, 5)} />
     </div>
   )
 } 
