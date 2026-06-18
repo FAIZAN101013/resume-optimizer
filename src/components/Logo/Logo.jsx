@@ -1,40 +1,74 @@
-import { Zap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-export default function Logo({
-  compact = false,
-  showTagline = true,
-  className = "",
-  textClassName = "",
-}) {
+export default function Logo() {
   const navigate = useNavigate();
 
   return (
     <div
       onClick={() => navigate("/")}
-      className={`flex items-center group cursor-pointer ${
-        compact ? "gap-2" : "gap-3"
-      } ${className}`}
+      className="cursor-pointer text-gray-900 dark:text-white"
     >
-      <div className="relative w-9 h-9 rounded-xl bg-gradient-to-br from-violet-500 to-violet-700 flex items-center justify-center shadow-md transition-all duration-300 group-hover:scale-105">
-        <div className="absolute inset-0 rounded-xl bg-violet-500/20 blur-sm opacity-0 group-hover:opacity-100 transition" />
-        <Zap className="w-4 h-4 text-white fill-white relative z-10" />
-      </div>
+     <svg
+  width="250"
+  height="70"
+  viewBox="0 0 500 140"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+        <defs>
+          <linearGradient id="jbzGradient" x1="0" y1="0" x2="500" y2="140">
+            <stop offset="0%" stopColor="#7C3AED" />
+            <stop offset="100%" stopColor="#06B6D4" />
+          </linearGradient>
+        </defs>
 
-      <div className="leading-tight">
-        <div
-          className={`text-gray-900 dark:text-white font-semibold tracking-tight ${
-            compact ? "text-xs" : "text-sm"
-          } ${textClassName}`}
+        <circle
+          cx="70"
+          cy="70"
+          r="40"
+          fill="url(#jbzGradient)"
+          opacity="0.12"
+        />
+
+        <path
+          d="M55 85V45H75V75C75 95 62 105 42 105"
+          stroke="url(#jbzGradient)"
+          strokeWidth="8"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+
+        <path
+          d="M82 58L98 42M98 42H86M98 42V54"
+          stroke="#06B6D4"
+          strokeWidth="4"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+
+        <text
+          x="140"
+          y="88"
+          fontFamily="Inter, Arial, sans-serif"
+          fontSize="56"
+          fontWeight="700"
+          fill="currentColor"
         >
-          Career <span className="text-violet-600 dark:text-violet-400">Log</span>
-        </div>
-        {showTagline && (
-          <div className="text-gray-500 dark:text-gray-400 text-[11px] mt-0.5 group-hover:text-gray-700 dark:group-hover:text-gray-300 transition">
-            Elite Career Suite
-          </div>
-        )}
-      </div>
+          JोBz
+        </text>
+
+        <text
+          x="144"
+          y="115"
+          fontFamily="Inter, Arial, sans-serif"
+          fontSize="16"
+          fontWeight="500"
+          fill="currentColor"
+          opacity="0.7"
+        >
+          Track • Apply • Grow
+        </text>
+      </svg>
     </div>
   );
 }

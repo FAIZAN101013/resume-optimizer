@@ -74,7 +74,9 @@ export default function Register() {
     <AuthLayout>
       <div className="w-full max-w-sm bg-white dark:bg-white/[0.02] border border-gray-200 dark:border-white/[0.07] rounded-2xl p-8 shadow-lg dark:shadow-none dark:backdrop-blur-sm">
 
-        <Logo showTagline={false} className="justify-center" textClassName="text-lg font-bold" />
+        <div className="flex justify-center mb-1 ml-18">
+         <Logo />
+       </div>
 
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold mb-1">Create account</h1>

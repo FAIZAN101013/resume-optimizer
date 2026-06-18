@@ -1,0 +1,14 @@
+<svg width="140" height="180" viewBox="0 0 140 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="jbzGradient" x1="20" y1="120" x2="120" y2="20">
+      <stop offset="0%" stop-color="#8B5CF6"/>
+      <stop offset="100%" stop-color="#22D3EE"/>
+    </linearGradient>
+  </defs>
+  <circle cx="70" cy="70" r="40" fill="url(#jbzGradient)" opacity="0.18"/>
+  <path d="M55 85V45H75V75C75 95 62 105 42 105" stroke="url(#jbzGradient)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M82 58L98 42M98 42H86M98 42V54" stroke="#22D3EE" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="70" y="122" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="10" font-weight="700" fill="#8DAEE7">
+    JोBz
+  </text>
+</svg>
