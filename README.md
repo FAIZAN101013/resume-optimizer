@@ -1,8 +1,28 @@
+<div align="center">
+
+<img src="./public/logo.svg" alt="JोBz Logo" width="260"/>
+
 # JोBz — Career Log
 
-JोBz (Career Log) is an AI-powered career management platform that helps job seekers organize their job search, track applications, manage interview pipelines, and accelerate career growth from a single dashboard.
+### Track • Apply • Grow
 
-Built for students, fresh graduates, and professionals, JोBz combines job tracking, AI assistance, and productivity tools to streamline the entire job search process.
+AI-powered career management platform for organizing job applications, tracking interview progress, and accelerating career growth.
+
+<p>
+  <a href="https://resume-optimizer-topaz-eight.vercel.app/">Live Demo</a> •
+  <a href="https://github.com/FAIZAN101013/resume-optimizer">Repository</a> •
+  <a href="https://www.linkedin.com/in/mohammed-faizan-patel/">LinkedIn</a>
+</p>
+
+</div>
+
+---
+
+## Overview
+
+JोBz (Career Log) is a modern AI-powered career management platform designed to help job seekers organize their applications, manage interviews, track progress, and stay productive throughout their job search journey.
+
+Built for students, fresh graduates, and professionals, JोBz combines job tracking, AI assistance, and career productivity tools into a single platform.
 
 ---
 
@@ -24,16 +44,18 @@ To help job seekers stay organized, make smarter career decisions, and land oppo
 
 The JोBz logo combines:
 
-* **J** → Represents Jobs and Journey
-* **Growth Arrow** → Represents career progression and opportunities
-* **Gradient Colors** → Innovation, ambition, and growth
+* **J** → Jobs & Journey
+* **Growth Arrow** → Career Progression & Opportunities
+* **Purple → Cyan Gradient** → Innovation, Growth, and Ambition
 
 ### Brand Colors
 
-* Primary Purple: `#7C3AED`
-* Secondary Cyan: `#06B6D4`
-* Dark Background: `#0A0A0F`
-* Light Background: `#FFFFFF`
+| Color            | Hex       |
+| ---------------- | --------- |
+| Primary Purple   | `#7C3AED` |
+| Secondary Cyan   | `#06B6D4` |
+| Dark Background  | `#0A0A0F` |
+| Light Background | `#FFFFFF` |
 
 ---
 
@@ -47,10 +69,10 @@ Manage your entire job search process from one place.
 
 * Add and manage job applications
 * Track application status
-* Organize interview schedules
 * Store application notes
-* Filter and search applications
-* Export data to CSV
+* Search and filter applications
+* Export application data to CSV
+* View application history
 
 #### Application Stages
 
@@ -69,8 +91,8 @@ Generate professional career-related emails instantly.
 
 * Follow-up Emails
 * Thank-you Emails
-* Application Withdrawal Emails
 * Interview Confirmation Emails
+* Application Withdrawal Emails
 
 ---
 
@@ -80,7 +102,7 @@ Generate professional career-related emails instantly.
 * Google Sign-In
 * Secure User Sessions
 * Protected Routes
-* Persistent Login
+* Persistent Login Sessions
 
 ---
 
@@ -127,7 +149,7 @@ A centralized workspace designed for career management.
 * Supabase Auth
 * Google OAuth
 
-### UI & Icons
+### UI & Animation
 
 * Lucide React
 * Framer Motion
@@ -209,10 +231,14 @@ https://resume-optimizer-topaz-eight.vercel.app/
 
 ### Mohammed Faizan Patel
 
-Computer Science Engineer | Frontend Developer | AI Enthusiast
+Computer Science Engineer • Frontend Developer • AI Enthusiast
 
-LinkedIn:
+**LinkedIn**
 https://www.linkedin.com/in/mohammed-faizan-patel/
 
-GitHub:
+**GitHub**
 https://github.com/FAIZAN101013
+
+---
+
+
