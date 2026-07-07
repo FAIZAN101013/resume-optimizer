@@ -34,7 +34,7 @@ export default function Sidebar() {
 
  const handleSignOut = async () => {
   await signOut();
-  window.location.replace("/");
+  navigate("/");
 };
 
   return (
@@ -56,7 +56,8 @@ export default function Sidebar() {
           Main Menu
         </p>
 
-        {links.map(({ label, to, icon: Icon }) => {
+        {links.map(({ label, to, icon }) => {
+          const LinkIcon = icon;
           const isActive = pathname === to;
           return (
             <Link
@@ -68,7 +69,7 @@ export default function Sidebar() {
                   : "text-gray-600 dark:text-gray-500 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-white/[0.04]"
               }`}
             >
-              <Icon
+              <LinkIcon
                 className={`w-4 h-4 flex-shrink-0 transition-colors ${
                   isActive
                     ? "text-violet-600 dark:text-violet-400"
