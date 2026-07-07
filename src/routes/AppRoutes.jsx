@@ -8,6 +8,7 @@ import Register from '../pages/Register'
 import Dashboard from '../pages/Dashboard'
 import Tracker from '../pages/Tracker'
 import Optimizer from '../pages/Optimizer'
+import Profile from '../pages/Profile'
 
 import ProtectedRoute from './ProtectedRoute'
 import PublicRoute from './PublicRoute'
@@ -76,6 +77,17 @@ export default function AppRoutes() {
           <Layout>
             <ProtectedRoute>
               <Optimizer />
+            </ProtectedRoute>
+          </Layout>
+        }
+      />
+
+      <Route
+        path="/profile"
+        element={
+          <Layout>
+            <ProtectedRoute>
+              <Profile />
             </ProtectedRoute>
           </Layout>
         }
