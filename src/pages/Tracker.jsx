@@ -1,6 +1,12 @@
-import { useState, useEffect } from "react";
-import { supabase } from "../lib/supabase";
+import { useState, useEffect, useCallback } from "react";
 import { Briefcase } from "lucide-react";
+import {
+  listJobs,
+  createJob,
+  updateJob,
+  deleteJob,
+} from "../services/jobService";
+import { JOB_STATUSES } from "../lib/constants";
 
 import JobAddModal from "../components/modal/JobAddModal";
 import JobEditModal from "../components/modal/JobEditModal";
@@ -14,120 +20,105 @@ import JobCard from "../components/tracker/JobCard";
 export default function Tracker() {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [activeFilter, setActiveFilter] = useState("All");
   const [search, setSearch] = useState("");
   const [selectedJob, setSelectedJob] = useState(null);
   const [modalMode, setModalMode] = useState(null);
 
-  useEffect(() => {
-    fetchJobs();
+  const fetchJobs = useCallback(async () => {
+    setLoading(true);
+    setError("");
+    try {
+      setJobs(await listJobs());
+    } catch (err) {
+      console.error(err);
+      setError(err.message || "Could not load your applications.");
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  const fetchJobs = async () => {
-    setLoading(true);
-    const { data, error } = await supabase
-      .from("jobs")
-      .select("*")
-      .order("created_at", { ascending: false });
-    if (error) console.error(error);
-    else setJobs(data);
-    setLoading(false);
-  };
+  useEffect(() => {
+    fetchJobs();
+  }, [fetchJobs]);
 
   const handleAddJob = async (form) => {
-    const { data: { user } } = await supabase.auth.getUser();
-    const { data, error } = await supabase
-      .from("jobs")
-      .insert([
-        {
-          company: form.company,
-          role: form.role,
-          status: form.status,
-          date: form.date,
-          company_email: form.companyEmail,
-          is_referral: form.isReferral,
-          referral_email: form.referralEmail,
-          notes: form.notes,
-          user_id: user.id,
-        },
-      ])
-      .select();
-    if (error) console.error(error);
-    else setJobs((prev) => [data[0], ...prev]);
+    try {
+      const created = await createJob(form);
+      setJobs((prev) => [created, ...prev]);
+    } catch (err) {
+      console.error(err);
+      setError(err.message || "Could not save that application.");
+    }
   };
 
   const handleDelete = async (id) => {
-    const { error } = await supabase.from("jobs").delete().eq("id", id);
-    if (error) console.error(error);
-    else setJobs((prev) => prev.filter((j) => j.id !== id));
+    // Optimistic: put the row back if the delete is rejected.
+    const previous = jobs;
+    setJobs((prev) => prev.filter((j) => j.id !== id));
+    try {
+      await deleteJob(id);
+    } catch (err) {
+      console.error(err);
+      setJobs(previous);
+      setError(err.message || "Could not delete that application.");
+    }
   };
 
   const handleEditSave = async (updatedJob) => {
-    const { error } = await supabase
-      .from("jobs")
-      .update({
-        company: updatedJob.company,
-        role: updatedJob.role,
-        status: updatedJob.status,
-        date: updatedJob.date,
-        company_email: updatedJob.companyEmail,
-        is_referral: updatedJob.isReferral,
-        referral_email: updatedJob.referralEmail,
-        notes: updatedJob.notes,
-      })
-      .eq("id", updatedJob.id);
-    if (error) console.error(error);
-    else
-      setJobs((prev) =>
-        prev.map((j) => (j.id === updatedJob.id ? updatedJob : j)),
-      );
+    try {
+      const saved = await updateJob(updatedJob.id, updatedJob);
+      setJobs((prev) => prev.map((j) => (j.id === saved.id ? saved : j)));
+    } catch (err) {
+      console.error(err);
+      setError(err.message || "Could not update that application.");
+    }
   };
 
   const filteredJobs = jobs
     .filter((j) => activeFilter === "All" || j.status === activeFilter)
     .filter((j) => {
-      const q = search.toLowerCase();
+      const q = search.trim().toLowerCase();
+      if (!q) return true;
       return (
-        j.company.toLowerCase().includes(q) || j.role.toLowerCase().includes(q)
+        (j.company || "").toLowerCase().includes(q) ||
+        (j.title || "").toLowerCase().includes(q)
       );
     });
 
-  const counts = {
-    Applied: jobs.filter((j) => j.status === "Applied").length,
-    Interview: jobs.filter((j) => j.status === "Interview").length,
-    Offer: jobs.filter((j) => j.status === "Offer").length,
-    Rejected: jobs.filter((j) => j.status === "Rejected").length,
-  };
+  const counts = Object.fromEntries(
+    JOB_STATUSES.map((s) => [s, jobs.filter((j) => j.status === s).length]),
+  );
 
   const handleExport = () => {
-    // 1. Define columns
-    const headers = ["Company", "Role", "Status", "Date", "Notes"];
+    const headers = [
+      "Company", "Title", "Status", "Applied on", "Location", "Work type",
+      "Salary", "Priority", "Source", "Recruiter", "Recruiter email", "URL", "Notes",
+    ];
 
-    // 2. Map jobs to rows
     const rows = jobs.map((j) => [
-      j.company,
-      j.role,
-      j.status,
-      j.date || "",
-      j.notes || "",
+      j.company, j.title, j.status, j.application_date, j.location,
+      j.work_type, j.salary, j.priority, j.source, j.recruiter_name,
+      j.recruiter_email, j.url, j.notes,
     ]);
 
-    // 3. Combine headers + rows into CSV string
+    // Escape embedded quotes, or a value containing one breaks the column split.
+    const escape = (val) => `"${String(val ?? "").replace(/"/g, '""')}"`;
+
     const csv = [headers, ...rows]
-      .map((row) => row.map((val) => `"${val}"`).join(","))
+      .map((row) => row.map(escape).join(","))
       .join("\n");
 
-    // 4. Create a downloadable link and click it
-    const blob = new Blob([csv], { type: "text/csv" });
+    // BOM so Excel reads UTF-8 correctly.
+    const blob = new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "career-log-jobs.csv";
+    a.download = "jobz-applications.csv";
     a.click();
     URL.revokeObjectURL(url);
-
-   
   };
 
    const isStale = (date) => {
@@ -164,6 +155,18 @@ export default function Tracker() {
         counts={counts}
       />
 
+      {error && (
+        <div className="mb-4 flex items-start justify-between gap-3 rounded-xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-700 dark:text-rose-300">
+          <span>{error}</span>
+          <button
+            onClick={() => setError("")}
+            className="text-rose-500 hover:text-rose-400 leading-none"
+          >
+            ×
+          </button>
+        </div>
+      )}
+
       {/* Job List */}
       {loading ? (
         <div className="text-center py-16 text-gray-500 dark:text-gray-600">
@@ -188,7 +191,7 @@ export default function Tracker() {
             <JobCard
               key={job.id}
               job={job}
-              isStale={job.status === "Applied" && isStale(job.date)}
+              isStale={job.status === "Applied" && isStale(job.application_date)}
               onClick={() => {
                 setSelectedJob(job);
                 setModalMode("view");
