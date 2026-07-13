@@ -23,12 +23,12 @@ export default function JobBasicTab({ form, set, fieldCls, errors }) {
           <input
             type="text"
             placeholder="Role / title"
-            className={fieldCls("role")}
-            value={form.role}
-            onChange={(e) => set("role", e.target.value)}
+            className={fieldCls("title")}
+            value={form.title || ""}
+            onChange={(e) => set("title", e.target.value)}
           />
 
-          {errors.role && (
+          {errors.title && (
             <p className="text-red-500 dark:text-red-400 text-xs mt-1">
               Required
             </p>
@@ -37,40 +37,40 @@ export default function JobBasicTab({ form, set, fieldCls, errors }) {
         <input
           type="date"
           className={fieldCls()}
-          value={form.date}
-          onChange={(e) => set("date", e.target.value)}
+          value={form.application_date || ""}
+          onChange={(e) => set("application_date", e.target.value)}
         />
          <input
         type="email"
         placeholder="Recruiter email"
         className={fieldCls()}
-        value={form.companyEmail}
-        onChange={(e) => set("companyEmail", e.target.value)}
+        value={form.recruiter_email || ""}
+        onChange={(e) => set("recruiter_email", e.target.value)}
       />
       <div className="col-span-2">
   <input
     type="url"
     placeholder="Job posting URL"
     className={fieldCls()}
-    value={form.jobUrl || ""}
-    onChange={(e) => set("jobUrl", e.target.value)}
+    value={form.url || ""}
+    onChange={(e) => set("url", e.target.value)}
   />
 </div>
       </div>
       <div className="mt-2.5">
   <textarea
-    placeholder="Paste the job description here (used for AI email drafts)…"
+    placeholder="Paste the job description here…"
     rows={4}
     className={fieldCls() + " resize-none leading-relaxed"}
-    value={form.jobDescription || ""}
-    onChange={(e) => set("jobDescription", e.target.value)}
+    value={form.description || ""}
+    onChange={(e) => set("description", e.target.value)}
   />
 
   <p className="text-[11px] text-gray-400 dark:text-white/20 mt-1">
-    Optional — helps generate tailored follow-up emails
+    Powers resume analysis, interview prep, and tailored emails
   </p>
 </div>
-     
+
     </Section>
   );
 }
