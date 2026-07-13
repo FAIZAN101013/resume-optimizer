@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import Button from '../Button'
+import { JOB_STATUSES, STATUS_ACTIVE, STATUS_INACTIVE } from '../../lib/constants'
 
 const TABS = [
   { key: "basic",   label: "Basic" },
@@ -7,15 +8,7 @@ const TABS = [
   { key: "notes",   label: "Notes" },
 ]
 
-const STATUS_OPTIONS = [
-  { key: 'Applied',   active: 'bg-violet-500/15 border-violet-500/50 text-violet-700 dark:text-violet-400' },
-  { key: 'Interview', active: 'bg-amber-500/10 border-amber-400/45 text-amber-700 dark:text-amber-300' },
-  { key: 'Offer',     active: 'bg-emerald-500/10 border-emerald-400/45 text-emerald-700 dark:text-emerald-400' },
-  { key: 'Rejected',  active: 'bg-rose-500/10 border-rose-400/45 text-rose-700 dark:text-rose-400' },
-]
-
-const STATUS_INACTIVE =
-  'border-gray-200 dark:border-white/[0.08] text-gray-500 dark:text-white/40 hover:text-gray-700 dark:hover:text-white/60 hover:border-gray-300 dark:hover:border-white/20'
+const STATUS_OPTIONS = JOB_STATUSES.map(key => ({ key, active: STATUS_ACTIVE[key] }))
 
 export default function JobEditModal({ job, onSave, onClose }) {
   const [tab, setTab]   = useState("basic")
@@ -31,7 +24,7 @@ export default function JobEditModal({ job, onSave, onClose }) {
   const handleBack = () => setTab(TABS[tabIndex - 1].key)
 
   const handleSave = () => {
-    if (!form.company.trim() || !form.role.trim()) { setTab("basic"); return }
+    if (!form.company?.trim() || !form.title?.trim()) { setTab("basic"); return }
     onSave(form)
     onClose()
   }
@@ -96,40 +89,40 @@ export default function JobEditModal({ job, onSave, onClose }) {
                 type="text"
                 placeholder="Company"
                 className={fieldCls}
-                value={form.company}
+                value={form.company || ''}
                 onChange={e => set('company', e.target.value)}
               />
               <input
                 type="text"
                 placeholder="Role / title"
                 className={fieldCls}
-                value={form.role}
-                onChange={e => set('role', e.target.value)}
+                value={form.title || ''}
+                onChange={e => set('title', e.target.value)}
               />
               <input
                 type="date"
                 className={fieldCls}
-                value={form.date}
-                onChange={e => set('date', e.target.value)}
+                value={form.application_date || ''}
+                onChange={e => set('application_date', e.target.value)}
               />
               <input
                 type="email"
                 placeholder="Recruiter email"
                 className={fieldCls}
-                value={form.companyEmail || ''}
-                onChange={e => set('companyEmail', e.target.value)}
+                value={form.recruiter_email || ''}
+                onChange={e => set('recruiter_email', e.target.value)}
               />
             </div>
             <div className="mt-2.5">
               <textarea
-                placeholder="Paste the job description here (used for AI email drafts)…"
+                placeholder="Paste the job description here…"
                 rows={4}
                 className={`${fieldCls} resize-none leading-relaxed`}
-                value={form.jobDescription || ''}
-                onChange={e => set('jobDescription', e.target.value)}
+                value={form.description || ''}
+                onChange={e => set('description', e.target.value)}
               />
               <p className="text-[11px] text-gray-400 dark:text-white/20 mt-1">
-                Optional — helps generate tailored follow-up emails
+                Powers resume analysis, interview prep, and tailored emails
               </p>
             </div>
           </Section>
@@ -143,7 +136,7 @@ export default function JobEditModal({ job, onSave, onClose }) {
                   <button
                     key={key}
                     onClick={() => set('status', key)}
-                    className={`py-1.5 rounded-lg border text-xs font-medium transition-all ${
+                    className={`py-1.5 rounded-lg border text-[11px] font-medium transition-all ${
                       form.status === key ? active : STATUS_INACTIVE
                     }`}
                   >
@@ -160,18 +153,18 @@ export default function JobEditModal({ job, onSave, onClose }) {
                 <input
                   type="checkbox"
                   className="w-4 h-4 accent-violet-500 cursor-pointer"
-                  checked={form.isReferral || false}
-                  onChange={e => set('isReferral', e.target.checked)}
+                  checked={form.is_referral || false}
+                  onChange={e => set('is_referral', e.target.checked)}
                 />
                 <span className="text-sm text-gray-600 dark:text-white/50">This application came through a referral</span>
               </label>
-              {form.isReferral && (
+              {form.is_referral && (
                 <input
                   type="email"
                   placeholder="Referral contact email"
                   className={`${fieldCls} mt-2.5`}
-                  value={form.referralEmail || ''}
-                  onChange={e => set('referralEmail', e.target.value)}
+                  value={form.referral_email || ''}
+                  onChange={e => set('referral_email', e.target.value)}
                 />
               )}
             </Section>

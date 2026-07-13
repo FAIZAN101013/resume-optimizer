@@ -1,18 +1,15 @@
 import { useState } from "react";
 import Button from "./../Button";
-import Section from "./modal-components/Section";
-import Divider from "./modal-components/Divider";
 import JobNotesTab from "./modal-components/JobNotesTab";
 import JobBasicTab from "./modal-components/JobBasicTab";
 import JobDetailsTab from "./modal-components/JobDetailsTab";
 
-import JobScheduleTab from "./modal-components/JobScheduleTab";
 import {
   FileText,
   Settings,
   StickyNote,
-  CalendarClock,
 } from "lucide-react";
+import { JOB_STATUSES, STATUS_ACTIVE, STATUS_INACTIVE } from "../../lib/constants";
 
 
 const TABS = [
@@ -31,63 +28,33 @@ const TABS = [
     label: "Notes",
     icon: StickyNote,
   },
-  {
-    key: "schedule",
-    label: "Schedule",
-    icon: CalendarClock,
-  },
+  // A "Schedule" tab lived here, but it wrote interview dates/times that had
+  // nowhere to go. Interview scheduling belongs to the interviews table and
+  // is handled by the Interviews module instead.
 ];
-const STATUS_OPTIONS = [
-  {
-    key: "Applied",
-    active:
-      "bg-violet-500/15 border-violet-500/50 text-violet-700 dark:text-violet-400",
-  },
-  {
-    key: "Assessment",
-    active:
-      "bg-blue-500/10 border-blue-400/45 text-blue-700 dark:text-blue-300",
-  },
-  {
-    key: "Interview",
-    active:
-      "bg-amber-500/10 border-amber-400/45 text-amber-700 dark:text-amber-300",
-  },
-  {
-    key: "Offer",
-    active:
-      "bg-emerald-500/10 border-emerald-400/45 text-emerald-700 dark:text-emerald-400",
-  },
-  {
-    key: "Accepted",
-    active:
-      "bg-green-500/10 border-green-400/45 text-green-700 dark:text-green-300",
-  },
-  {
-    key: "Rejected",
-    active:
-      "bg-rose-500/10 border-rose-400/45 text-rose-700 dark:text-rose-400",
-  },
-];
+const STATUS_OPTIONS = JOB_STATUSES.map((key) => ({
+  key,
+  active: STATUS_ACTIVE[key],
+}));
 
 const INITIAL_FORM = {
   company: "",
-  role: "",
+  title: "",
   status: "Applied",
-  date: "",
-  companyEmail: "",
-  isReferral: false,
-  referralEmail: "",
-  jobDescription: "",
+  application_date: "",
+  recruiter_email: "",
+  is_referral: false,
+  referral_email: "",
+  description: "",
   notes: "",
-  jobUrl: "",
-  assessmentDate: "",
-  interviewDate: "",
-  followUpDate: "",
+  url: "",
+  location: "",
+  work_type: "",
+  salary: "",
+  source: "",
+  recruiter_name: "",
+  priority: "Medium",
 };
-
-const STATUS_INACTIVE =
-  "border-gray-200 dark:border-white/[0.08] text-gray-500 dark:text-white/40 hover:text-gray-700 dark:hover:text-white/60 hover:border-gray-300 dark:hover:border-white/20";
 
 export default function JobAddModal({ onAdd, onClose }) {
   const [tab, setTab] = useState("basic");
@@ -106,7 +73,7 @@ export default function JobAddModal({ onAdd, onClose }) {
   const validateBasic = () => {
     const next = {};
     if (!form.company.trim()) next.company = true;
-    if (!form.role.trim()) next.role = true;
+    if (!form.title.trim()) next.title = true;
     setErrors(next);
     return Object.keys(next).length === 0;
   };
@@ -123,10 +90,13 @@ export default function JobAddModal({ onAdd, onClose }) {
       setTab("basic");
       return;
     }
+    // No client-side id — Postgres assigns it. A "Saved" job hasn't been
+    // applied to yet, so it deliberately gets no application date.
     onAdd({
-      id: Date.now(),
       ...form,
-      date: form.date || new Date().toLocaleDateString(),
+      application_date:
+        form.application_date ||
+        (form.status === "Saved" ? "" : new Date().toISOString().slice(0, 10)),
     });
     onClose();
   };
@@ -229,13 +199,6 @@ export default function JobAddModal({ onAdd, onClose }) {
         {tab === "notes" && (
           <JobNotesTab form={form} set={set} fieldCls={fieldCls} />
         )}
-        {tab === "schedule" && (
-  <JobScheduleTab
-    form={form}
-    set={set}
-    fieldCls={fieldCls}
-  />
-)}
 
         <div className="flex gap-2 justify-between pt-5 mt-2 border-t border-gray-200 dark:border-white/[0.06]">
           <div>
