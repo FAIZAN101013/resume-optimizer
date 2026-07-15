@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import { supabase } from '../lib/supabase'
+import { listJobs } from '../services/jobService'
+import { JOB_STATUSES } from '../lib/constants'
 import DashboardHeader from '../components/dashboard/DashboardHeader'
 import StatsGrid from '../components/dashboard/StatsGrid'
 import QuickActions from '../components/dashboard/QuickActions'
@@ -10,27 +11,25 @@ import ThemeToggle from '../components/ThemeToggle'
 export default function Dashboard() {
   const [jobs, setJobs] = useState([])
   const [loading, setLoading] = useState(true)
-  const [selectedDate, setSelectedDate] = useState(new Date())
+  const [error, setError] = useState('')
 
   useEffect(() => {
     const fetchJobs = async () => {
-      const { data, error } = await supabase
-        .from('jobs')
-        .select('*')
-        .order('created_at', { ascending: false })
-      if (error) console.error(error)
-      else setJobs(data)
-      setLoading(false)
+      try {
+        setJobs(await listJobs())
+      } catch (err) {
+        console.error(err)
+        setError(err.message || 'Could not load your dashboard.')
+      } finally {
+        setLoading(false)
+      }
     }
     fetchJobs()
   }, [])
 
-  const counts = {
-    Applied:   jobs.filter(j => j.status === 'Applied').length,
-    Interview: jobs.filter(j => j.status === 'Interview').length,
-    Offer:     jobs.filter(j => j.status === 'Offer').length,
-    Rejected:  jobs.filter(j => j.status === 'Rejected').length,
-  }
+  const counts = Object.fromEntries(
+    JOB_STATUSES.map(s => [s, jobs.filter(j => j.status === s).length]),
+  )
 
   if (loading) {
     return (
@@ -46,6 +45,12 @@ export default function Dashboard() {
         <DashboardHeader />
         <ThemeToggle />
       </div>
+      {error && (
+        <div className="mb-6 rounded-xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-700 dark:text-rose-300">
+          {error}
+        </div>
+      )}
+
       <StatsGrid counts={counts} />
      <QuickActions jobCount={jobs.length} />
 
