@@ -1,24 +1,12 @@
 import { useState } from 'react'
 import { X, Briefcase, Calendar, Mail, Users, FileText, Sparkles, Copy, Check } from 'lucide-react'
 import Button from '../Button'
+import { STATUS_BADGE, EMAIL_TYPES } from '../../lib/constants'
 
 const TABS = [
   { key: "overview", label: "Overview" },
   { key: "jd",       label: "Job description" },
   { key: "email",    label: "AI email" },
-]
-
-const STATUS_BADGE = {
-  Applied:   'text-violet-700 bg-violet-500/10 border-violet-500/20 dark:text-violet-400',
-  Interview: 'text-amber-700 bg-amber-500/10 border-amber-500/20 dark:text-amber-400',
-  Offer:     'text-emerald-700 bg-emerald-500/10 border-emerald-500/20 dark:text-emerald-400',
-  Rejected:  'text-rose-700 bg-rose-500/10 border-rose-500/20 dark:text-rose-400',
-}
-
-const EMAIL_TYPES = [
-  { key: 'followup',  label: 'Follow-up' },
-  { key: 'thankyou',  label: 'Thank you' },
-  { key: 'withdrawn', label: 'Withdraw' },
 ]
 
 async function generateEmail({ type, job }) {
@@ -78,11 +66,11 @@ export default function JobViewModal({ job, onClose, onEdit }) {
         <div className="flex items-start justify-between p-6 pb-4 border-b border-gray-200 dark:border-white/[0.06] shrink-0">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-white/[0.06] flex items-center justify-center text-base font-bold text-gray-700 dark:text-gray-300 shrink-0">
-              {job.company[0]}
+              {(job.company || '?')[0].toUpperCase()}
             </div>
             <div>
               <h2 className="text-base font-semibold text-gray-900 dark:text-white">{job.company}</h2>
-              <p className="text-xs text-gray-500 mt-0.5">{job.role}</p>
+              <p className="text-xs text-gray-500 mt-0.5">{job.title}</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -122,9 +110,9 @@ export default function JobViewModal({ job, onClose, onEdit }) {
           {tab === "overview" && (
             <>
               <div className="grid grid-cols-2 gap-3">
-                <Detail icon={Calendar}  label="Applied on"      value={job.date || '—'} />
-                <Detail icon={Mail}      label="Recruiter email" value={job.companyEmail || '—'} />
-                <Detail icon={Users}     label="Referral"        value={job.isReferral ? job.referralEmail || 'Yes' : 'No'} />
+                <Detail icon={Calendar}  label="Applied on"      value={job.application_date || '—'} />
+                <Detail icon={Mail}      label="Recruiter email" value={job.recruiter_email || job.company_email || '—'} />
+                <Detail icon={Users}     label="Referral"        value={job.is_referral ? job.referral_email || 'Yes' : 'No'} />
                 <Detail icon={Briefcase} label="Status"          value={job.status} />
               </div>
               {job.notes && (
@@ -141,13 +129,13 @@ export default function JobViewModal({ job, onClose, onEdit }) {
           )}
 
           {tab === "jd" && (
-            job.jobDescription ? (
+            job.description ? (
               <div>
                 <div className="flex items-center gap-1.5 text-[11px] text-gray-500 dark:text-gray-600 uppercase tracking-widest font-medium mb-3">
                   <FileText className="w-3 h-3" /> Job description
                 </div>
                 <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed whitespace-pre-wrap bg-gray-50 dark:bg-white/[0.02] border border-gray-200 dark:border-white/[0.06] rounded-lg px-3 py-2.5">
-                  {job.jobDescription}
+                  {job.description}
                 </p>
               </div>
             ) : (
@@ -171,12 +159,12 @@ export default function JobViewModal({ job, onClose, onEdit }) {
             <div className="space-y-4">
               <div>
                 <p className="text-[11px] font-medium text-gray-500 dark:text-white/35 tracking-widest uppercase mb-2">Email type</p>
-                <div className="flex gap-2">
+                <div className="grid grid-cols-3 gap-2">
                   {EMAIL_TYPES.map(({ key, label }) => (
                     <button
                       key={key}
                       onClick={() => { setType(key); setDraft(''); setError('') }}
-                      className={`flex-1 py-2 rounded-lg border text-xs font-medium transition-all ${
+                      className={`py-2 px-1 rounded-lg border text-[11px] font-medium leading-tight transition-all ${
                         emailType === key
                           ? 'bg-violet-500/15 border-violet-500/40 text-violet-700 dark:text-violet-300'
                           : 'border-gray-200 dark:border-white/[0.08] text-gray-500 dark:text-white/35 hover:text-gray-700 dark:hover:text-white/55 hover:border-gray-300 dark:hover:border-white/20'
@@ -189,7 +177,7 @@ export default function JobViewModal({ job, onClose, onEdit }) {
               </div>
 
               <p className="text-xs text-gray-400 dark:text-white/25">
-                {job.jobDescription
+                {job.description
                   ? '✓ JD detected — email will be personalised to the role.'
                   : 'No JD — email uses company & role name only. Add one via the Job description tab for better results.'}
               </p>
