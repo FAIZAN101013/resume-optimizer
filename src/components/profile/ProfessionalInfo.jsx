@@ -1,49 +1,38 @@
 import Card from "../common/Card";
+import { Input, Toggle } from "../common/Field";
+import TagInput from "../common/TagInput";
 
-const ProfessionalInfo = ({ formData, handleChange }) => {
+const ProfessionalInfo = ({ formData, handleChange, setField }) => {
   return (
     <Card
       title="Professional Information"
       subtitle="Update your career details"
     >
-      <div className="space-y-6">
+      <div className="space-y-5">
 
-        <div>
-          <label className="block text-sm font-medium mb-2">
-            Job Title
-          </label>
+        <Input
+          label="Professional Headline"
+          name="job_title"
+          value={formData.job_title}
+          onChange={handleChange}
+          placeholder="Frontend Developer"
+        />
 
-          <input
-            type="text"
-            name="job_title"
-            value={formData.job_title}
-            onChange={handleChange}
-            placeholder="Frontend Developer"
-            className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3"
-          />
-        </div>
+        <TagInput
+          label="Skills"
+          hint="Matched against job descriptions"
+          value={formData.skills}
+          onChange={(skills) => setField("skills", skills)}
+          placeholder="Type a skill and press Enter"
+        />
 
-        <div className="flex items-center justify-between rounded-xl border border-zinc-700 bg-zinc-950 p-4">
-
-          <div>
-            <h3 className="font-medium">
-              Open to Work
-            </h3>
-
-            <p className="text-sm text-zinc-400">
-              Let recruiters know you're available.
-            </p>
-          </div>
-
-          <input
-            type="checkbox"
-            name="open_to_work"
-            checked={formData.open_to_work}
-            onChange={handleChange}
-            className="h-5 w-5"
-          />
-
-        </div>
+        <Toggle
+          label="Open to Work"
+          description="Let recruiters know you're available."
+          name="open_to_work"
+          checked={formData.open_to_work}
+          onChange={handleChange}
+        />
 
       </div>
     </Card>
