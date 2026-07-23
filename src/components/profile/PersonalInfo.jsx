@@ -1,68 +1,47 @@
 import Card from "../common/Card";
+import { Input, Textarea } from "../common/Field";
 
 const PersonalInfo = ({ formData, handleChange }) => {
   return (
-    <Card
-      title="Personal Information"
-      subtitle="Manage your personal details"
-    >
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <Card title="Personal Information" subtitle="Manage your personal details">
+      <div className="space-y-4">
 
-        <div>
-          <label className="block text-sm font-medium mb-2">
-            Full Name
-          </label>
+        <Input
+          label="Full name"
+          name="full_name"
+          value={formData.full_name}
+          onChange={handleChange}
+          placeholder="Ada Lovelace"
+        />
 
-          <input
-            type="text"
-            name="full_name"
-            value={formData.full_name}
-            onChange={handleChange}
-            className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium mb-2">
-            Phone Number
-          </label>
-
-          <input
-            type="text"
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <Input
+            label="Phone"
             name="phone"
+            type="tel"
             value={formData.phone}
             onChange={handleChange}
-            className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3"
+            placeholder="+91 98765 43210"
           />
-        </div>
 
-        <div className="md:col-span-2">
-          <label className="block text-sm font-medium mb-2">
-            Location
-          </label>
-
-          <input
-            type="text"
+          <Input
+            label="Location"
             name="location"
             value={formData.location}
             onChange={handleChange}
-            className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3"
+            placeholder="Bengaluru, India"
           />
         </div>
 
-        <div className="md:col-span-2">
-          <label className="block text-sm font-medium mb-2">
-            Bio
-          </label>
-
-          <textarea
-            rows={5}
-            name="bio"
-            value={formData.bio}
-            onChange={handleChange}
-            className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 resize-none"
-          />
-        </div>
+        <Textarea
+          label="Bio"
+          hint="Seeds your resume summary"
+          name="bio"
+          rows={6}
+          value={formData.bio}
+          onChange={handleChange}
+          placeholder="A short paragraph about who you are and what you're looking for."
+        />
 
       </div>
     </Card>
