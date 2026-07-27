@@ -9,6 +9,7 @@ export default function Button({
   variant = 'primary',
   size = 'md',
   className = '',
+  ...rest
 }) {
 
   const sizes = {
@@ -18,7 +19,7 @@ export default function Button({
   }
 
   const variants = {
-    primary: 'bg-gradient-to-r from-violet-600 to-pink-500 hover:from-violet-500 hover:to-pink-400 text-white hover:shadow-lg hover:shadow-violet-500/30',
+    primary: 'bg-gradient-to-r from-[#7C3AED] to-[#06B6D4] hover:from-[#6D28D9] hover:to-[#0891B2] text-white hover:shadow-lg hover:shadow-violet-500/30',
     secondary: 'bg-gray-100 hover:bg-gray-200 border border-gray-200 text-gray-700 dark:bg-white/[0.05] dark:hover:bg-white/[0.08] dark:border-white/[0.08] dark:backdrop-blur-md dark:text-gray-300',
     ghost: 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/[0.04]',
     danger: 'bg-red-600 hover:bg-red-700 text-white',
@@ -36,9 +37,16 @@ export default function Button({
     )
   }
 
-  // Otherwise render a button
+  // Otherwise render a button. `rest` carries through things like `form`,
+  // which lets a submit button live outside its <form>.
   return (
-    <button type={type} onClick={onClick} disabled={disabled} className={base}>
+    <button
+      type={type}
+      onClick={onClick}
+      disabled={disabled}
+      className={base}
+      {...rest}
+    >
       {children}
     </button>
   )
