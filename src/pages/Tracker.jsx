@@ -1,5 +1,6 @@
-import { useState, useEffect, useCallback } from "react";
-import { Briefcase } from "lucide-react";
+import { useState, useEffect, useCallback, useMemo } from "react";
+import { Briefcase, SearchX } from "lucide-react";
+
 import {
   listJobs,
   createJob,
@@ -7,25 +8,34 @@ import {
   deleteJob,
 } from "../services/jobService";
 import { JOB_STATUSES } from "../lib/constants";
+import { filterAndSortJobs, isStale } from "../lib/jobFilters";
 
 import JobAddModal from "../components/modal/JobAddModal";
 import JobEditModal from "../components/modal/JobEditModal";
 import JobViewModal from "../components/modal/JobViewModal";
 import TrackerHeader from "../components/tracker/TrackerHeader";
 import StatsBar from "../components/tracker/StatsBar";
-import SearchBar from "../components/tracker/SearchBar";
+import TrackerToolbar from "../components/tracker/TrackerToolbar";
 import FilterTabs from "../components/tracker/FilterTabs";
 import JobCard from "../components/tracker/JobCard";
+import ConfirmDialog from "../components/common/ConfirmDialog";
+import Button from "../components/Button";
 
 export default function Tracker() {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [showModal, setShowModal] = useState(false);
-  const [activeFilter, setActiveFilter] = useState("All");
-  const [search, setSearch] = useState("");
+
+  const [showAddModal, setShowAddModal] = useState(false);
   const [selectedJob, setSelectedJob] = useState(null);
   const [modalMode, setModalMode] = useState(null);
+  const [pendingDelete, setPendingDelete] = useState(null);
+  const [deleting, setDeleting] = useState(false);
+
+  const [activeFilter, setActiveFilter] = useState("All");
+  const [search, setSearch] = useState("");
+  const [sort, setSort] = useState("created_desc");
+  const [dateRange, setDateRange] = useState("all");
 
   const fetchJobs = useCallback(async () => {
     setLoading(true);
@@ -41,6 +51,8 @@ export default function Tracker() {
   }, []);
 
   useEffect(() => {
+    // Standard fetch-on-mount; the loading flag has to flip before the await.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchJobs();
   }, [fetchJobs]);
 
@@ -54,16 +66,26 @@ export default function Tracker() {
     }
   };
 
-  const handleDelete = async (id) => {
-    // Optimistic: put the row back if the delete is rejected.
-    const previous = jobs;
-    setJobs((prev) => prev.filter((j) => j.id !== id));
+  const handleDelete = async () => {
+    if (!pendingDelete) return;
+
+    setDeleting(true);
     try {
-      await deleteJob(id);
+      await deleteJob(pendingDelete.id);
+      setJobs((prev) => prev.filter((j) => j.id !== pendingDelete.id));
+      setPendingDelete(null);
+
+      // The row is gone, so close any modal still showing it.
+      if (selectedJob?.id === pendingDelete.id) {
+        setSelectedJob(null);
+        setModalMode(null);
+      }
     } catch (err) {
       console.error(err);
-      setJobs(previous);
       setError(err.message || "Could not delete that application.");
+      setPendingDelete(null);
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -71,25 +93,26 @@ export default function Tracker() {
     try {
       const saved = await updateJob(updatedJob.id, updatedJob);
       setJobs((prev) => prev.map((j) => (j.id === saved.id ? saved : j)));
+
+      // Keep the view modal in sync if it reopens behind the edit modal.
+      setSelectedJob((prev) => (prev?.id === saved.id ? saved : prev));
     } catch (err) {
       console.error(err);
       setError(err.message || "Could not update that application.");
     }
   };
 
-  const filteredJobs = jobs
-    .filter((j) => activeFilter === "All" || j.status === activeFilter)
-    .filter((j) => {
-      const q = search.trim().toLowerCase();
-      if (!q) return true;
-      return (
-        (j.company || "").toLowerCase().includes(q) ||
-        (j.title || "").toLowerCase().includes(q)
-      );
-    });
+  const visibleJobs = useMemo(
+    () => filterAndSortJobs(jobs, { search, status: activeFilter, dateRange, sort }),
+    [jobs, search, activeFilter, dateRange, sort],
+  );
 
-  const counts = Object.fromEntries(
-    JOB_STATUSES.map((s) => [s, jobs.filter((j) => j.status === s).length]),
+  const counts = useMemo(
+    () =>
+      Object.fromEntries(
+        JOB_STATUSES.map((s) => [s, jobs.filter((j) => j.status === s).length]),
+      ),
+    [jobs],
   );
 
   const handleExport = () => {
@@ -98,7 +121,9 @@ export default function Tracker() {
       "Salary", "Priority", "Source", "Recruiter", "Recruiter email", "URL", "Notes",
     ];
 
-    const rows = jobs.map((j) => [
+    // Export what's on screen when a filter is active — otherwise the button
+    // silently contradicts the list the user is looking at.
+    const rows = visibleJobs.map((j) => [
       j.company, j.title, j.status, j.application_date, j.location,
       j.work_type, j.salary, j.priority, j.source, j.recruiter_name,
       j.recruiter_email, j.url, j.notes,
@@ -121,38 +146,44 @@ export default function Tracker() {
     URL.revokeObjectURL(url);
   };
 
-   const isStale = (date) => {
-      if (!date) return false;
+  const closeModals = () => {
+    setSelectedJob(null);
+    setModalMode(null);
+  };
 
-      const days = (new Date() - new Date(date)) / (1000 * 60 * 60 * 24);
-      return days > 5;
-    };
+  const hasFilters = search || dateRange !== "all" || activeFilter !== "All";
 
-    
   return (
-    <div className="w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="mx-auto w-full max-w-5xl">
       <TrackerHeader
         count={jobs.length}
-        onAdd={() => setShowModal(true)}
+        onAdd={() => setShowAddModal(true)}
         onExport={handleExport}
       />
 
       <StatsBar
         counts={counts}
+        total={jobs.length}
         activeFilter={activeFilter}
         onFilter={setActiveFilter}
       />
 
-      <SearchBar
-        value={search}
-        onChange={setSearch}
-        onClear={() => setSearch("")}
+      <TrackerToolbar
+        search={search}
+        onSearch={setSearch}
+        sort={sort}
+        onSort={setSort}
+        dateRange={dateRange}
+        onDateRange={setDateRange}
+        resultCount={visibleJobs.length}
+        totalCount={jobs.length}
       />
 
       <FilterTabs
         activeFilter={activeFilter}
         onFilter={setActiveFilter}
         counts={counts}
+        total={jobs.length}
       />
 
       {error && (
@@ -160,70 +191,108 @@ export default function Tracker() {
           <span>{error}</span>
           <button
             onClick={() => setError("")}
-            className="text-rose-500 hover:text-rose-400 leading-none"
+            aria-label="Dismiss"
+            className="leading-none text-rose-500 hover:text-rose-400"
           >
             ×
           </button>
         </div>
       )}
 
-      {/* Job List */}
+      {/* Job list */}
       {loading ? (
-        <div className="text-center py-16 text-gray-500 dark:text-gray-600">
-          <div className="w-5 h-5 border-2 border-violet-500/30 border-t-violet-500 rounded-full animate-spin mx-auto mb-3" />
-          <p className="text-sm">Loading jobs...</p>
+        <div className="py-16 text-center text-gray-500 dark:text-gray-600">
+          <div className="mx-auto mb-3 h-5 w-5 animate-spin rounded-full border-2 border-violet-500/30 border-t-violet-500" />
+          <p className="text-sm">Loading applications…</p>
         </div>
-      ) : filteredJobs.length === 0 ? (
-        <div className="text-center py-16 text-gray-500 dark:text-gray-600">
-          <Briefcase
-            className="w-8 h-8 mx-auto mb-3 opacity-30"
-            strokeWidth={1.5}
-          />
-          <p className="text-sm">
-            {search
-              ? `No results for "${search}"`
-              : "No jobs found. Add your first application!"}
-          </p>
+      ) : visibleJobs.length === 0 ? (
+        <div className="py-16 text-center">
+          {hasFilters ? (
+            <>
+              <SearchX
+                className="mx-auto mb-3 h-8 w-8 opacity-30"
+                strokeWidth={1.5}
+              />
+              <p className="text-sm text-gray-500 dark:text-gray-600">
+                No applications match these filters.
+              </p>
+              <button
+                onClick={() => {
+                  setSearch("");
+                  setDateRange("all");
+                  setActiveFilter("All");
+                }}
+                className="mt-3 text-xs text-violet-600 transition-colors hover:text-violet-500 dark:text-violet-400"
+              >
+                Clear filters
+              </button>
+            </>
+          ) : (
+            <>
+              <Briefcase
+                className="mx-auto mb-3 h-8 w-8 opacity-30"
+                strokeWidth={1.5}
+              />
+              <p className="text-sm text-gray-500 dark:text-gray-600">
+                No applications yet.
+              </p>
+              <p className="mt-1 text-xs text-gray-400 dark:text-gray-700">
+                Add your first one to start tracking your search.
+              </p>
+              <div className="mt-4">
+                <Button onClick={() => setShowAddModal(true)}>+ Add Job</Button>
+              </div>
+            </>
+          )}
         </div>
       ) : (
         <div className="space-y-3">
-          {filteredJobs.map((job) => (
+          {visibleJobs.map((job) => (
             <JobCard
               key={job.id}
               job={job}
-              isStale={job.status === "Applied" && isStale(job.application_date)}
+              isStale={isStale(job)}
               onClick={() => {
                 setSelectedJob(job);
                 setModalMode("view");
               }}
-              onDelete={handleDelete}
+              onDelete={() => setPendingDelete(job)}
             />
           ))}
         </div>
       )}
 
       {/* Modals */}
-      {showModal && (
-        <JobAddModal onAdd={handleAddJob} onClose={() => setShowModal(false)} />
+      {showAddModal && (
+        <JobAddModal
+          onAdd={handleAddJob}
+          onClose={() => setShowAddModal(false)}
+        />
       )}
+
       {selectedJob && modalMode === "view" && (
         <JobViewModal
           job={selectedJob}
-          onClose={() => {
-            setSelectedJob(null);
-            setModalMode(null);
-          }}
+          onClose={closeModals}
           onEdit={() => setModalMode("edit")}
         />
       )}
+
       {selectedJob && modalMode === "edit" && (
         <JobEditModal
           job={selectedJob}
           onSave={handleEditSave}
-          onClose={() => {
-            setSelectedJob(null);
-            setModalMode(null);
-          }}
+          onClose={closeModals}
+        />
+      )}
+
+      {pendingDelete && (
+        <ConfirmDialog
+          title="Delete this application?"
+          message={`${pendingDelete.title} at ${pendingDelete.company} will be removed, along with its timeline. This can't be undone.`}
+          onConfirm={handleDelete}
+          onCancel={() => setPendingDelete(null)}
+          busy={deleting}
         />
       )}
     </div>
