@@ -1,21 +1,27 @@
-const Card = ({ title, subtitle, children, className = "" }) => {
+// Matches the surface used across the dashboard and tracker: subtle border,
+// near-transparent fill in dark, tight padding.
+const Card = ({ title, subtitle, action, children, className = "" }) => {
   return (
     <section
-      className={`bg-zinc-900 border border-zinc-800 rounded-2xl p-6 ${className}`}
+      className={`rounded-xl border border-gray-200 bg-white p-5 transition-colors dark:border-white/[0.06] dark:bg-white/[0.02] ${className}`}
     >
-      {(title || subtitle) && (
-        <div className="mb-6">
-          {title && (
-            <h2 className="text-xl font-semibold text-white">
-              {title}
-            </h2>
-          )}
+      {(title || subtitle || action) && (
+        <div className="mb-4 flex items-start justify-between gap-4">
+          <div>
+            {title && (
+              <h2 className="text-sm font-semibold text-gray-900 dark:text-white">
+                {title}
+              </h2>
+            )}
 
-          {subtitle && (
-            <p className="text-sm text-zinc-400 mt-1">
-              {subtitle}
-            </p>
-          )}
+            {subtitle && (
+              <p className="mt-0.5 text-xs text-gray-500 dark:text-white/35">
+                {subtitle}
+              </p>
+            )}
+          </div>
+
+          {action}
         </div>
       )}
 
