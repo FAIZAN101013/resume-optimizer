@@ -1,12 +1,17 @@
 import { useState } from 'react'
-import { X, Briefcase, Calendar, Mail, Users, FileText, Sparkles, Copy, Check } from 'lucide-react'
+import {
+  X, Briefcase, Calendar, Mail, Users, FileText, Sparkles, Copy, Check,
+  MapPin, Banknote, Globe, Flag, History, Link as LinkIcon, User,
+} from 'lucide-react'
 import Button from '../Button'
-import { STATUS_BADGE, EMAIL_TYPES } from '../../lib/constants'
+import JobTimeline from '../tracker/JobTimeline'
+import { STATUS_BADGE, PRIORITY_BADGE, EMAIL_TYPES } from '../../lib/constants'
 
 const TABS = [
-  { key: "overview", label: "Overview" },
-  { key: "jd",       label: "Job description" },
-  { key: "email",    label: "AI email" },
+  { key: "overview",  label: "Overview" },
+  { key: "jd",        label: "Job description" },
+  { key: "timeline",  label: "Timeline" },
+  { key: "email",     label: "AI email" },
 ]
 
 async function generateEmail({ type, job }) {
@@ -98,6 +103,11 @@ export default function JobViewModal({ job, onClose, onEdit }) {
               }`}
             >
               {label}
+              {key === 'timeline' && (
+                <span className="ml-1.5 text-[10px] px-1.5 py-0.5 rounded-full bg-gray-100 dark:bg-white/[0.06] text-gray-500 dark:text-white/35">
+                  <History className="w-2.5 h-2.5 inline" />
+                </span>
+              )}
               {key === 'email' && (
                 <span className="ml-1.5 text-[10px] px-1.5 py-0.5 rounded-full bg-violet-500/20 text-violet-600 dark:text-violet-400">AI</span>
               )}
@@ -110,10 +120,33 @@ export default function JobViewModal({ job, onClose, onEdit }) {
           {tab === "overview" && (
             <>
               <div className="grid grid-cols-2 gap-3">
-                <Detail icon={Calendar}  label="Applied on"      value={job.application_date || '—'} />
+                <Detail icon={Calendar}  label="Applied on" value={job.application_date || '—'} />
+                <Detail icon={Briefcase} label="Work type"  value={job.work_type || '—'} />
+                <Detail icon={MapPin}    label="Location"   value={job.location || '—'} />
+                <Detail icon={Banknote}  label="Salary"     value={job.salary || '—'} />
+                <Detail icon={Globe}     label="Source"     value={job.source || '—'} />
+                <Detail icon={Flag}      label="Priority">
+                  {job.priority ? (
+                    <span className={`inline-block rounded-full border px-2 py-0.5 text-[11px] font-medium ${PRIORITY_BADGE[job.priority]}`}>
+                      {job.priority}
+                    </span>
+                  ) : '—'}
+                </Detail>
+                <Detail icon={User}      label="Recruiter"  value={job.recruiter_name || '—'} />
                 <Detail icon={Mail}      label="Recruiter email" value={job.recruiter_email || job.company_email || '—'} />
-                <Detail icon={Users}     label="Referral"        value={job.is_referral ? job.referral_email || 'Yes' : 'No'} />
-                <Detail icon={Briefcase} label="Status"          value={job.status} />
+                <Detail icon={Users}     label="Referral"   value={job.is_referral ? job.referral_email || 'Yes' : 'No'} />
+                <Detail icon={LinkIcon}  label="Job posting">
+                  {job.url ? (
+                    <a
+                      href={job.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-violet-600 hover:underline dark:text-violet-400"
+                    >
+                      Open posting
+                    </a>
+                  ) : '—'}
+                </Detail>
               </div>
               {job.notes && (
                 <div className="pt-2 border-t border-gray-200 dark:border-white/[0.06]">
@@ -154,6 +187,8 @@ export default function JobViewModal({ job, onClose, onEdit }) {
               </div>
             )
           )}
+
+          {tab === "timeline" && <JobTimeline jobId={job.id} />}
 
           {tab === "email" && (
             <div className="space-y-4">
@@ -235,8 +270,14 @@ export default function JobViewModal({ job, onClose, onEdit }) {
           )}
         </div>
 
-        <div className="flex gap-2 justify-end px-6 py-4 border-t border-gray-200 dark:border-white/[0.06] shrink-0">
+        <div className="flex flex-wrap gap-2 justify-end px-6 py-4 border-t border-gray-200 dark:border-white/[0.06] shrink-0">
           <Button variant="secondary" onClick={onClose}>Close</Button>
+          {job.description?.trim() && (
+            <Button variant="secondary" to={`/optimizer?job=${job.id}`}>
+              <Sparkles className="w-3.5 h-3.5" />
+              Optimize resume
+            </Button>
+          )}
           <Button onClick={onEdit}>Edit application</Button>
         </div>
 
@@ -245,13 +286,13 @@ export default function JobViewModal({ job, onClose, onEdit }) {
   )
 }
 
-function Detail({ icon: Icon, label, value }) {
+function Detail({ icon: Icon, label, value, children }) {
   return (
     <div className="bg-gray-50 dark:bg-white/[0.02] border border-gray-200 dark:border-white/[0.06] rounded-lg px-3 py-2.5">
       <div className="flex items-center gap-1.5 text-[10px] text-gray-500 dark:text-gray-600 uppercase tracking-widest font-medium mb-1">
         <Icon className="w-3 h-3" strokeWidth={1.75} /> {label}
       </div>
-      <div className="text-sm text-gray-700 dark:text-gray-300 truncate">{value}</div>
+      <div className="text-sm text-gray-700 dark:text-gray-300 truncate">{children ?? value}</div>
     </div>
   )
 }
