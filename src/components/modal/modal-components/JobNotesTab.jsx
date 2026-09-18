@@ -11,7 +11,7 @@ export default function JobNotesTab({
         placeholder="Any extra context, links, or reminders…"
         rows={6}
         className={fieldCls() + " resize-none leading-relaxed"}
-        value={form.notes}
+        value={form.notes || ""}
         onChange={(e) => set("notes", e.target.value)}
       />
 
