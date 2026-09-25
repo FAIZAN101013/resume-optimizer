@@ -65,3 +65,12 @@ export const JOB_SOURCES = [
   'LinkedIn', 'Indeed', 'Company website', 'Referral',
   'Naukri', 'AngelList', 'Job board', 'Other',
 ]
+
+// Resume sections the AI rewriter can improve.
+export const REWRITABLE_SECTIONS = [
+  { key: 'summary', label: 'Professional summary' },
+  { key: 'experience', label: 'Experience' },
+  { key: 'projects', label: 'Projects' },
+  { key: 'skills', label: 'Skills' },
+  { key: 'cover_letter', label: 'Cover letter' },
+]
