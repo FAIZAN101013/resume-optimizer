@@ -1,0 +1,15 @@
+User-agent: *
+Allow: /
+
+# Authenticated app pages — crawlers only see a redirect to /login.
+Disallow: /dashboard
+Disallow: /tracker
+Disallow: /optimizer
+Disallow: /builder
+Disallow: /assistant
+Disallow: /interviews
+Disallow: /analytics
+Disallow: /profile
+Disallow: /settings
+
+Sitemap: https://resume-optimizer-topaz-eight.vercel.app/sitemap.xml
