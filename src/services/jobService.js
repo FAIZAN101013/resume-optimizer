@@ -118,6 +118,21 @@ export async function listJobActivities(jobId) {
   return data ?? []
 }
 
+// Recent activity across every application, for the dashboard feed.
+export async function listRecentActivities(limit = 8) {
+  const userId = await requireUserId()
+
+  const { data, error } = await supabase
+    .from('job_activities')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+    .limit(limit)
+
+  if (error) throw error
+  return data ?? []
+}
+
 export async function addActivity(jobId, activityType, description, metadata = {}) {
   const userId = await requireUserId()
 
