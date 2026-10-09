@@ -20,6 +20,7 @@ import Logo from "./Logo/Logo";
 import { useAuth } from "../context/AuthContext";
 import { useProfile } from "../context/ProfileContext";
 import { useTheme } from "../context/ThemeContext";
+import { SUPPORT_EMAIL } from "../lib/constants";
 
 const links = [
   { label: "Dashboard", to: "/dashboard", icon: LayoutDashboard },
@@ -107,13 +108,16 @@ export default function Sidebar() {
 
       {/* Bottom */}
       <div className="mt-auto flex flex-col gap-1 border-t border-gray-200 pt-4 dark:border-white/[0.06]">
-        <button className="group flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-gray-600 transition-all duration-150 hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-white/[0.04] dark:hover:text-gray-300">
+        <a
+          href={`mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent('JoBz support')}`}
+          className="group flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-gray-600 transition-all duration-150 hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-white/[0.04] dark:hover:text-gray-300"
+        >
           <LifeBuoy
             className="h-4 w-4 text-gray-500 transition-colors group-hover:text-gray-700 dark:text-gray-600 dark:group-hover:text-gray-300"
             strokeWidth={1.75}
           />
           <span className="font-medium">Support</span>
-        </button>
+        </a>
 
         {/* User menu */}
         <div ref={menuRef} className="relative">

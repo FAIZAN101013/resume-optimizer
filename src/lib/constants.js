@@ -1,3 +1,7 @@
+// Where support mail goes. Defined once so the address can't drift between
+// the sidebar, the footer and anywhere it's added later.
+export const SUPPORT_EMAIL = 'jobz.careers.app@gmail.com'
+
 // Single source of truth for the enums the database enforces.
 // These must stay in sync with the CHECK constraints in
 // supabase/migrations/0001_jobz_schema.sql — if they drift, inserts fail.
