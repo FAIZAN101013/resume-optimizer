@@ -1,42 +1,56 @@
-import { FileEdit, BarChart2, ArrowRight } from 'lucide-react'
-import Button from '../Button'
+import { Link } from 'react-router-dom'
+import { Plus, FileEdit, Sparkles, CalendarPlus } from 'lucide-react'
 
-export default function QuickActions({ jobCount }) {
+// The four actions the spec asks for, each landing on the page that performs
+// it rather than a generic module home.
+const ACTIONS = [
+  {
+    label: 'Add job',
+    hint: 'Track a new application',
+    to: '/tracker',
+    icon: Plus,
+    tone: 'bg-violet-500/10 text-violet-600 dark:text-violet-400',
+  },
+  {
+    label: 'Optimize resume',
+    hint: 'Score against a job',
+    to: '/optimizer',
+    icon: FileEdit,
+    tone: 'bg-cyan-500/10 text-cyan-600 dark:text-cyan-400',
+  },
+  {
+    label: 'Generate email',
+    hint: 'Follow up or thank',
+    to: '/assistant',
+    icon: Sparkles,
+    tone: 'bg-amber-500/10 text-amber-600 dark:text-amber-400',
+  },
+  {
+    label: 'Schedule interview',
+    hint: 'Add a round',
+    to: '/interviews',
+    icon: CalendarPlus,
+    tone: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
+  },
+]
+
+export default function QuickActions() {
   return (
-    <div className="grid md:grid-cols-2 gap-4 mb-8">
+    <div className="mb-8 grid grid-cols-2 gap-3 lg:grid-cols-4">
+      {ACTIONS.map(({ label, hint, to, icon: Icon, tone }) => (
+        <Link
+          key={to}
+          to={to}
+          className="group rounded-xl border border-gray-200 bg-white p-4 transition-all duration-200 hover:border-gray-300 dark:border-white/[0.06] dark:bg-white/[0.02] dark:hover:border-white/[0.1]"
+        >
+          <div className={`mb-3 flex h-9 w-9 items-center justify-center rounded-lg ${tone}`}>
+            <Icon className="h-4 w-4" strokeWidth={1.75} />
+          </div>
 
-      <div className="p-5 rounded-xl bg-violet-500/[0.06] border border-violet-500/20 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-violet-500/15 flex items-center justify-center">
-            <FileEdit className="w-4 h-4 text-violet-600 dark:text-violet-400" strokeWidth={1.75} />
-          </div>
-          <div>
-            <div className="text-sm font-semibold text-gray-900 dark:text-white">Resume Optimizer</div>
-            <div className="text-xs text-gray-500">6 AI tools ready</div>
-          </div>
-        </div>
-        <Button to="/optimizer" size="sm">
-          Open <ArrowRight className="w-3 h-3" />
-        </Button>
-      </div>
-
-      <div className="p-5 rounded-xl bg-emerald-500/[0.06] border border-emerald-500/20 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-emerald-500/15 flex items-center justify-center">
-            <BarChart2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" strokeWidth={1.75} />
-          </div>
-          <div>
-            <div className="text-sm font-semibold text-gray-900 dark:text-white">Job Tracker</div>
-            <div className="text-xs text-gray-500">
-              {jobCount} active application{jobCount !== 1 ? 's' : ''}
-            </div>
-          </div>
-        </div>
-        <Button to="/tracker" size="sm" variant="secondary">
-          Open <ArrowRight className="w-3 h-3" />
-        </Button>
-      </div>
-
+          <div className="text-sm font-semibold text-gray-900 dark:text-white">{label}</div>
+          <div className="mt-0.5 text-xs text-gray-500 dark:text-white/30">{hint}</div>
+        </Link>
+      ))}
     </div>
   )
 }
