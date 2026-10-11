@@ -3,24 +3,29 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import AuthLayout from '../layouts/AuthLayout'
 import Logo from '../components/Logo/Logo'
-import ThemeToggle from '../components/ThemeToggle'
+import VerifyCode from '../components/auth/VerifyCode'
 
 const fieldCls =
   "w-full px-3 py-2.5 rounded-lg bg-gray-50 dark:bg-white/[0.04] border border-gray-200 dark:border-white/[0.08] text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-600 focus:outline-none focus:border-violet-500/50 focus:bg-white dark:focus:bg-white/[0.06] transition-all duration-200"
 
 export default function Register() {
-  const { signUp, signInWithGoogle } = useAuth()
+  const { signUp, verifyOtp, resendCode, signInWithGoogle, sendWelcomeEmail } = useAuth()
   const navigate = useNavigate()
 
   const [form, setForm] = useState({ email: '', password: '', confirm: '' })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  const [success, setSuccess] = useState(false)
+  const [awaitingCode, setAwaitingCode] = useState(false)
 
   const set = (key, value) => setForm(prev => ({ ...prev, [key]: value }))
 
   const handleSubmit = async () => {
     setError('')
+
+    if (!form.email.trim()) {
+      setError('Enter your email address')
+      return
+    }
 
     if (form.password !== form.confirm) {
       setError('Passwords do not match')
@@ -33,14 +38,32 @@ export default function Register() {
     }
 
     setLoading(true)
-    const { error } = await signUp(form.email, form.password)
+    const { error, needsVerification } = await signUp(form.email.trim(), form.password)
 
     if (error) {
       setError(error.message)
+    } else if (needsVerification) {
+      setAwaitingCode(true)
     } else {
-      setSuccess(true)
+      // Email confirmation is switched off, so the account is already live.
+      await sendWelcomeEmail()
+      navigate('/dashboard')
     }
+
     setLoading(false)
+  }
+
+  const handleVerify = async (code) => {
+    const result = await verifyOtp(form.email.trim(), code)
+
+    if (!result.error) {
+      // Only now is the address confirmed, so this is the right moment to
+      // welcome them. It never blocks entry to the app.
+      await sendWelcomeEmail()
+      navigate('/dashboard')
+    }
+
+    return result
   }
 
   const handleGoogle = async () => {
@@ -48,25 +71,16 @@ export default function Register() {
     if (error) setError(error.message)
   }
 
-  if (success) {
+  if (awaitingCode) {
     return (
-      <div className="relative min-h-screen bg-gray-50 dark:bg-[#0a0a0f] text-gray-900 dark:text-white flex items-center justify-center px-4 transition-colors duration-300">
-        <div className="absolute top-4 right-4">
-          <ThemeToggle />
-        </div>
-        <div className="text-center max-w-sm">
-          <div className="w-12 h-12 rounded-full bg-emerald-500/15 flex items-center justify-center mx-auto mb-4">
-            <span className="text-emerald-600 dark:text-emerald-400 text-xl">✓</span>
-          </div>
-          <h2 className="text-xl font-bold mb-2">Check your email</h2>
-          <p className="text-gray-500 text-sm mb-6">
-            We sent a confirmation link to <span className="text-gray-700 dark:text-gray-300">{form.email}</span>
-          </p>
-          <Link to="/login" className="text-violet-600 dark:text-violet-400 text-sm hover:text-violet-500 dark:hover:text-violet-300 transition-colors">
-            Back to login →
-          </Link>
-        </div>
-      </div>
+      <AuthLayout>
+        <VerifyCode
+          email={form.email.trim()}
+          onVerify={handleVerify}
+          onResend={() => resendCode(form.email.trim())}
+          onBack={() => { setAwaitingCode(false); setError('') }}
+        />
+      </AuthLayout>
     )
   }
 
