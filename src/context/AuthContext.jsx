@@ -1,61 +1,116 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 
-const AuthContext = createContext(); // This crates a gobal continer which holds the user data  and can be accessed from any component in the app without prop drilling
+const AuthContext = createContext();
 
-export const useAuth = () => useContext(AuthContext); // This is a custom hook which will be used to access the user data from any component in the app
+export const useAuth = () => useContext(AuthContext);
 
 export function AuthProvider({ children }) {
-  // This is a provider component which will wrap the entire app and provide the user data to all the components in the app
-  const [user, setUser] = useState(null); // This state will hold the user data and will be updated when the user logs in or logs out
-  const [loading, setLoading] = useState(true); // This state will hold the loading state of the user data and will be used to show a loading spinner while the user data is being fetched
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Get current session on load
-
     supabase.auth.getSession().then(({ data: { session } }) => {
-      // supabase.auth.getSession() this  ask supabase if the user is logged in or not and returns the session data if the user is logged in , this .then(({ data: { session } }) => { is used to destructure the session data from the response
       setUser(session?.user ?? null);
-      setLoading(false); //Done checking auth status
+      setLoading(false);
     });
 
     const {
-      data: { subscription } // This is used to listen for changes in the auth state and update the user data accordingly
-  } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null); // This is used to update the user data when the user logs in or logs out, the session?.user ?? null is used to set the user data to null if the user is not logged in
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
     });
 
-    // Cleanup listener on unmount
-    return () => subscription.unsubscribe(); // This is used to clean up the listener when the component unmounts to prevent memory leaks
+    return () => subscription.unsubscribe();
   }, []);
 
+  /**
+   * Creates the account. Supabase mails a verification code — we never
+   * generate or store one ourselves, so expiry, single-use and rate limiting
+   * are handled by the auth service rather than by us.
+   *
+   * Returns needsVerification so the UI knows whether to show the code step.
+   * When "Confirm email" is off in Supabase, signUp returns a live session and
+   * there is nothing to verify.
+   */
   const signUp = async (email, password) => {
-    const { error } = await supabase.auth.signUp({ email, password });
+    const { data, error } = await supabase.auth.signUp({ email, password });
+
+    return {
+      error,
+      needsVerification: !error && !data.session,
+    };
+  };
+
+  /** Exchanges the emailed code for a session. */
+  const verifyOtp = async (email, token) => {
+    const { error } = await supabase.auth.verifyOtp({
+      email,
+      token: token.trim(),
+      type: "signup",
+    });
+    return { error };
+  };
+
+  /** Sends a fresh code if the first one expired or never arrived. */
+  const resendCode = async (email) => {
+    const { error } = await supabase.auth.resend({ type: "signup", email });
     return { error };
   };
 
   const signIn = async (email, password) => {
-  const { error } = await supabase.auth.signInWithPassword({ email, password })
-  return { error }
-}
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    return { error };
+  };
 
   const signInWithGoogle = async () => {
-    const {error} = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options:{
-        redirectTo: window.location.origin + '/dashboard' // This is used to redirect the user to the dashboard page after successful login with google
-      }
-    })
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: window.location.origin + "/dashboard" },
+    });
     return { error };
-  }
+  };
 
   const signOut = async () => {
     await supabase.auth.signOut();
-  }
+  };
 
-  return(
-   <AuthContext.Provider value={{ user, loading, signUp, signIn, signInWithGoogle, signOut }}>
-    {!loading && children}
-  </AuthContext.Provider>
-  )
+  /**
+   * Fire-and-forget welcome email. The server derives the recipient from the
+   * session token, so nothing here can redirect it elsewhere.
+   *
+   * Failures are swallowed: a missing welcome email must never block someone
+   * from getting into the product they just signed up for.
+   */
+  const sendWelcomeEmail = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+
+      await fetch("/api/send-welcome", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      });
+    } catch (err) {
+      console.warn("Welcome email could not be sent:", err);
+    }
+  };
+
+  return (
+    <AuthContext.Provider
+      value={{
+        user,
+        loading,
+        signUp,
+        verifyOtp,
+        resendCode,
+        signIn,
+        signInWithGoogle,
+        signOut,
+        sendWelcomeEmail,
+      }}
+    >
+      {!loading && children}
+    </AuthContext.Provider>
+  );
 }
