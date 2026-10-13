@@ -3,17 +3,17 @@
      redirect crawlers to /login. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://resume-optimizer-topaz-eight.vercel.app/</loc>
+    <loc>https://jobzs.vercel.app/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://resume-optimizer-topaz-eight.vercel.app/login</loc>
+    <loc>https://jobzs.vercel.app/login</loc>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://resume-optimizer-topaz-eight.vercel.app/register</loc>
+    <loc>https://jobzs.vercel.app/register</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
