@@ -5,7 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="google-site-verification" content="btg51Ek6aGXFHdJM89FW1RscMfWbUflxzkyvJOqRRQk" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="apple-touch-icon" href="/favicon.svg" />
+    <!-- Google's favicon crawler wants a raster icon in a multiple of 48px;
+         the SVG alone is why search results showed the generic globe. -->
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96.png" />
+    <link rel="apple-touch-icon" href="/favicon-96.png" />
 
     <title>JोBz — Track • Apply • Grow</title>
     <meta
@@ -23,8 +26,21 @@
       content="AI-powered career management for students, graduates and job seekers."
     />
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="JoBz" />
     <meta property="og:url" content="https://jobzs.vercel.app/" />
     <link rel="canonical" href="https://jobzs.vercel.app/" />
+
+    <!-- Tells Google the site's name, so results say "JoBz" instead of
+         falling back to the hosting provider's name. -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "JoBz",
+        "alternateName": ["JोBz", "jobzs"],
+        "url": "https://jobzs.vercel.app/"
+      }
+    </script>
 
     <!-- Paints the correct background before React mounts, so a reload in dark
          mode does not flash white. Runs before first paint, hence inline. -->
