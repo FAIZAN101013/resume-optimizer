@@ -42,6 +42,56 @@ html.dark body {
   color: white;
 }
 
+/* ---------------------------------------------------------------- printing */
+/* The resume sheet is always white paper with black text, in both themes —
+   a document preview that changed colour with the UI would be wrong on screen
+   and wrong on paper. */
+
+.resume-sheet {
+  background: #ffffff;
+  color: #000000;
+  width: 210mm;              /* A4 */
+  min-height: 297mm;
+  padding: 14mm 15mm;
+}
+
+@media print {
+  /* Print the sheet and nothing else. Visibility rather than display so the
+     sheet's ancestors stay in the layout and it isn't detached. */
+  body * {
+    visibility: hidden !important;
+  }
+
+  .resume-sheet,
+  .resume-sheet * {
+    visibility: visible !important;
+  }
+
+  .resume-sheet {
+    position: absolute !important;
+    left: 0;
+    top: 0;
+    width: 100% !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  /* Never break a role or project across pages mid-entry. */
+  .resume-sheet section,
+  .resume-sheet article > header {
+    break-inside: avoid;
+  }
+
+  @page {
+    size: A4;
+    margin: 14mm 15mm;
+  }
+}
+
 .scrollbar-none::-webkit-scrollbar {
   display: none;
 }
