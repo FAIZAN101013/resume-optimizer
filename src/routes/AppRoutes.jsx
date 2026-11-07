@@ -8,6 +8,7 @@ import Register from '../pages/Register'
 import Dashboard from '../pages/Dashboard'
 import Tracker from '../pages/Tracker'
 import Optimizer from '../pages/Optimizer'
+import Builder from '../pages/Builder'
 import Assistant from '../pages/Assistant'
 import Interviews from '../pages/Interviews'
 import Analytics from '../pages/Analytics'
@@ -27,6 +28,7 @@ const PRIVATE_ROUTES = [
   { path: '/dashboard', element: <Dashboard /> },
   { path: '/tracker', element: <Tracker /> },
   { path: '/optimizer', element: <Optimizer /> },
+  { path: '/builder', element: <Builder /> },
   { path: '/assistant', element: <Assistant /> },
   { path: '/interviews', element: <Interviews /> },
   { path: '/analytics', element: <Analytics /> },
