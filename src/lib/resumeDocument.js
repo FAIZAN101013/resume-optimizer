@@ -126,3 +126,75 @@ export function documentGaps(doc) {
 
   return gaps
 }
+
+/* ------------------------------------------------------------ field paths */
+// AI review suggestions carry a dot path like "experience.0.bullets.1" so a
+// fix can be applied directly instead of being retyped by the user.
+
+export function getByPath(obj, path) {
+  if (!path) return undefined
+
+  return path.split('.').reduce((acc, key) => {
+    if (acc == null) return undefined
+    return acc[Array.isArray(acc) ? Number(key) : key]
+  }, obj)
+}
+
+/** Immutable set. Returns a new document; the original is untouched. */
+export function setByPath(obj, path, value) {
+  if (!path) return obj
+
+  const keys = path.split('.')
+
+  const walk = (node, depth) => {
+    const key = keys[depth]
+    const isLast = depth === keys.length - 1
+
+    if (Array.isArray(node)) {
+      const index = Number(key)
+      if (Number.isNaN(index) || index < 0 || index >= node.length) return node
+
+      const next = node.slice()
+      next[index] = isLast ? value : walk(node[index], depth + 1)
+      return next
+    }
+
+    if (node && typeof node === 'object') {
+      if (!(key in node)) return node
+      return { ...node, [key]: isLast ? value : walk(node[key], depth + 1) }
+    }
+
+    return node
+  }
+
+  return walk(obj, 0)
+}
+
+/** True when the path resolves to something that can actually be replaced. */
+export function pathExists(obj, path) {
+  return path ? getByPath(obj, path) !== undefined : false
+}
+
+/** Moves an item within an array field, for reordering sections. */
+export function moveItem(items, from, to) {
+  if (to < 0 || to >= items.length) return items
+
+  const next = items.slice()
+  const [moved] = next.splice(from, 1)
+  next.splice(to, 0, moved)
+  return next
+}
+
+/** An empty document, for building a resume without a profile behind it. */
+export function emptyDocument() {
+  return {
+    name: '', headline: '', email: '', phone: '', location: '',
+    links: [], summary: '',
+    experience: [], projects: [], education: [], certifications: [], skills: [],
+  }
+}
+
+export const newExperience = () => ({ title: '', company: '', location: '', type: '', range: '', bullets: [] })
+export const newProject = () => ({ name: '', role: '', tech: '', url: '', urlLabel: '', bullets: [] })
+export const newEducation = () => ({ degree: '', school: '', range: '', grade: '' })
+export const newCertification = () => ({ name: '', issuer: '', date: '', url: '' })
