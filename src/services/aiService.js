@@ -74,6 +74,11 @@ export async function generateEmail({ type, job, extra }) {
   return postJson('/api/generate-email', { type, job, extra })
 }
 
+/** Reviews the resume on its own terms, with no job description. */
+export async function reviewResume(document) {
+  return postJson('/api/review-resume', { document })
+}
+
 export async function generateInterviewPrep({
   company,
   position,
