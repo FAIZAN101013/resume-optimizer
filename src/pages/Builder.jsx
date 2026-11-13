@@ -63,6 +63,7 @@ export default function Builder() {
     if (!el) return
 
     const observer = new ResizeObserver(([entry]) => {
+      // contentRect already excludes padding, so this is the usable width.
       const available = entry.contentRect.width
       setScale(Math.min(1, Math.max(0.28, available / A4_WIDTH)))
     })
@@ -272,7 +273,7 @@ export default function Builder() {
           room for an A4 page in the middle, two otherwise. */}
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(300px,340px)_1fr] 2xl:grid-cols-[minmax(300px,340px)_1fr_320px]">
 
-        <div className="min-w-0 lg:max-h-[calc(100vh-12rem)] lg:overflow-y-auto lg:pr-1 lg:scrollbar-none">
+        <div className="flex min-w-0 flex-col lg:h-[calc(100vh-11rem)]">
           <div className="mb-2 flex justify-end">
             <button
               type="button"
@@ -284,14 +285,17 @@ export default function Builder() {
             </button>
           </div>
 
-          <BuilderForm doc={doc} onChange={setDoc} />
+          <div className="min-h-0 flex-1 overflow-y-auto pr-1 scrollbar-none">
+            <BuilderForm doc={doc} onChange={setDoc} />
+          </div>
         </div>
 
         {/* Preview */}
         <div
           ref={previewRef}
-          className="min-w-0 overflow-hidden rounded-xl bg-gray-100 p-4 dark:bg-black/20"
+          className="flex min-w-0 flex-col rounded-xl bg-gray-100 p-4 dark:bg-black/20 lg:h-[calc(100vh-11rem)]"
         >
+          <div className="min-h-0 flex-1 overflow-y-auto scrollbar-none">
           <div
             className="mx-auto overflow-hidden"
             style={{ width: A4_WIDTH * scale, height: A4_HEIGHT * scale }}
@@ -306,16 +310,16 @@ export default function Builder() {
             </div>
           </div>
 
-          <p className="mt-3 text-center text-[10px] text-gray-400 dark:text-white/25">
+          </div>
+
+          <p className="mt-3 shrink-0 text-center text-[10px] text-gray-400 dark:text-white/25">
             {theme.name} · {Math.round(scale * 100)}% · A4
           </p>
         </div>
 
         {showReview && (
-          <div className="min-w-0 lg:col-span-2 2xl:col-span-1">
-            <div className="2xl:sticky 2xl:top-4">
-              <AiReviewPanel doc={doc} onApply={setDoc} />
-            </div>
+          <div className="min-w-0 lg:col-span-2 2xl:col-span-1 2xl:h-[calc(100vh-11rem)]">
+            <AiReviewPanel doc={doc} onApply={setDoc} />
           </div>
         )}
       </div>

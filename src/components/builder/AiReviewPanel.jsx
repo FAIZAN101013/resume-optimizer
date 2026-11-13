@@ -51,9 +51,9 @@ export default function AiReviewPanel({ doc, onApply }) {
   const tone = review ? scoreTone(review.overall.score) : null
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white dark:border-white/[0.06] dark:bg-white/[0.02]">
+    <div className="flex h-full flex-col rounded-xl border border-gray-200 bg-white dark:border-white/[0.06] dark:bg-white/[0.02]">
 
-      <div className="flex items-center justify-between gap-3 border-b border-gray-200 px-4 py-3 dark:border-white/[0.06]">
+      <div className="flex shrink-0 items-center justify-between gap-3 border-b border-gray-200 px-4 py-3 dark:border-white/[0.06]">
         <h2 className="text-sm font-semibold text-gray-900 dark:text-white">AI Review</h2>
 
         <button
@@ -76,7 +76,7 @@ export default function AiReviewPanel({ doc, onApply }) {
         </button>
       </div>
 
-      <div className="max-h-[calc(100vh-14rem)] overflow-y-auto p-4 scrollbar-none">
+      <div className="min-h-0 flex-1 overflow-y-auto p-4 scrollbar-none">
         {error && (
           <div className="flex items-start gap-2 rounded-lg border border-rose-500/20 bg-rose-500/10 px-3 py-2.5 text-xs text-rose-700 dark:text-rose-300">
             <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
