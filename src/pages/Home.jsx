@@ -1,80 +1,164 @@
-import { ArrowRight, FileEdit, BarChart2, Sparkles } from 'lucide-react'
+import {
+  ArrowRight,
+  FileEdit,
+  FileText,
+  BarChart2,
+  Sparkles,
+  CalendarDays,
+  PieChart,
+} from 'lucide-react'
 import { motion } from 'framer-motion'
+
 import FeatureCard from '../components/FeatureCard'
 import Button from '../components/Button'
 import Footer from '../components/home/Footer'
 import DashboardPreview from '../components/home/DashboardPreview'
-import AvatarStack from '../components/home/AvatarStack'
 
-const STATS = [
-  { value: '3.2×', label: 'more interviews' },
-  { value: '48h',  label: 'avg. response time' },
-  { value: '94%',  label: 'ATS pass rate' },
+// What the product actually does, in the order you actually do it. This
+// replaced a row of invented statistics — no real numbers exist to quote yet,
+// and made-up ones would be the first thing a recruiter sees.
+const STEPS = [
+  {
+    step: '01',
+    title: 'Track',
+    body: 'Every application in one pipeline, from saved to offer, with a timeline of what happened when.',
+  },
+  {
+    step: '02',
+    title: 'Tailor',
+    body: 'Score your resume against the actual job description and see exactly which keywords are missing.',
+  },
+  {
+    step: '03',
+    title: 'Prepare',
+    body: 'Interview questions generated from that same description, then a follow-up email when it is done.',
+  },
+]
+
+const FEATURES = [
+  {
+    title: 'Resume Optimizer',
+    description:
+      'Upload a PDF or DOCX and score it against a specific job. Match score, ATS breakdown, missing keywords, and fixes that quote your actual wording.',
+    icon: FileEdit,
+    tags: ['ATS score', 'Missing keywords', 'Section rewriter'],
+    to: '/optimizer',
+    color: 'violet',
+    label: 'Optimize a resume',
+  },
+  {
+    title: 'Resume Builder',
+    description:
+      'Build a resume from your profile in four templates, get an AI critique of it, and export a PDF whose text stays selectable.',
+    icon: FileText,
+    tags: ['4 templates', 'AI review', 'PDF export'],
+    to: '/builder',
+    color: 'cyan',
+    label: 'Build a resume',
+  },
+  {
+    title: 'Job Tracker',
+    description:
+      'Seven stages from saved to withdrawn, with search, sorting, date filters and a timeline the database keeps honest.',
+    icon: BarChart2,
+    tags: ['Pipeline', 'Timeline', 'CSV export'],
+    to: '/tracker',
+    color: 'emerald',
+    label: 'Track applications',
+  },
+  {
+    title: 'Interviews & Prep',
+    description:
+      'Schedule rounds against an application, then generate likely technical, behavioural and HR questions from the real job description.',
+    icon: CalendarDays,
+    tags: ['Scheduling', 'Question sets', 'Prep notes'],
+    to: '/interviews',
+    color: 'amber',
+    label: 'Plan interviews',
+  },
+  {
+    title: 'AI Assistant',
+    description:
+      'Seven kinds of career email — follow-ups, thank-yous, reschedules, withdrawals — grounded in the application they belong to.',
+    icon: Sparkles,
+    tags: ['7 email types', 'Editable drafts', 'Saved history'],
+    to: '/assistant',
+    color: 'violet',
+    label: 'Write an email',
+  },
+  {
+    title: 'Career Analytics',
+    description:
+      'Conversion funnel, application volume over time, and breakdowns by status, company and source — so you can see what is working.',
+    icon: PieChart,
+    tags: ['Funnel', 'Trends', 'Breakdowns'],
+    to: '/analytics',
+    color: 'cyan',
+    label: 'See your numbers',
+  },
 ]
 
 const containerVariants = {
   hidden: {},
-  show: { transition: { staggerChildren: 0.12 } },
+  show: { transition: { staggerChildren: 0.1 } },
 }
 
 const fadeUp = {
-  hidden: { opacity: 0, y: 32 },
-  show:   { opacity: 1, y: 0, transition: { duration: 0.6 } },
+  hidden: { opacity: 0, y: 28 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.55 } },
 }
 
 export default function Home() {
   return (
-    <div className="relative min-h-screen bg-white dark:bg-[#0a0a0f] text-gray-900 dark:text-white overflow-hidden transition-colors duration-300">
+    <div className="relative min-h-screen overflow-hidden bg-white text-gray-900 transition-colors duration-300 dark:bg-[#0a0a0f] dark:text-white">
 
-      <div className="absolute inset-0 -z-10 pointer-events-none">
-        <div className="absolute top-[-200px] left-1/2 -translate-x-1/2 w-[700px] h-[700px] bg-violet-500/10 dark:bg-violet-500/20 rounded-full blur-[140px] animate-pulse" />
-        <div className="absolute bottom-[-200px] right-1/3 w-[600px] h-[600px] bg-pink-500/10 dark:bg-pink-500/20 rounded-full blur-[140px] animate-pulse" />
+      {/* Brand wash — purple to cyan, not the old violet/pink */}
+      <div className="pointer-events-none absolute inset-0 -z-10">
+        <div className="absolute left-1/2 top-[-200px] h-[700px] w-[700px] -translate-x-1/2 rounded-full bg-violet-500/10 blur-[140px] dark:bg-violet-500/20" />
+        <div className="absolute bottom-[-200px] right-1/3 h-[600px] w-[600px] rounded-full bg-cyan-500/10 blur-[140px] dark:bg-cyan-500/20" />
       </div>
 
+      {/* Hero */}
       <motion.section
         variants={containerVariants}
         initial="hidden"
         animate="show"
-        className="flex flex-col items-center text-center px-6 pt-20 pb-24"
+        className="flex flex-col items-center px-6 pb-20 pt-20 text-center"
       >
-        <motion.div variants={fadeUp} className="flex items-center gap-2 bg-violet-500/10 border border-violet-400/20 text-violet-600 dark:text-violet-400 text-xs font-medium px-4 py-1.5 rounded-full mb-8">
-          <Sparkles className="w-3 h-3" />
-          AI-Powered Career Operating System
+        <motion.div
+          variants={fadeUp}
+          className="mb-8 flex items-center gap-2 rounded-full border border-violet-400/20 bg-violet-500/10 px-4 py-1.5 text-xs font-medium text-violet-600 dark:text-violet-400"
+        >
+          <Sparkles className="h-3 w-3" />
+          AI-powered career management
         </motion.div>
 
-        <motion.h1 variants={fadeUp} className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.05] mb-6 max-w-5xl">
-          Stop guessing your
+        <motion.h1
+          variants={fadeUp}
+          className="mb-6 max-w-4xl text-4xl font-bold leading-[1.05] tracking-tight md:text-6xl lg:text-7xl"
+        >
+          Your whole job search,
           <br />
-          <span className="bg-gradient-to-r from-violet-600 to-pink-500 dark:from-violet-400 dark:to-pink-400 bg-clip-text text-transparent">
-            next career move.
+          <span className="bg-gradient-to-r from-[#7C3AED] to-[#06B6D4] bg-clip-text text-transparent">
+            in one place.
           </span>
         </motion.h1>
 
-        <motion.p variants={fadeUp} className="text-gray-600 dark:text-gray-300 text-lg max-w-xl leading-relaxed mb-4">
-          Optimize your resume, track your job pipeline, and land interviews faster —
-          all in one powerful system.
+        <motion.p
+          variants={fadeUp}
+          className="mb-10 max-w-xl text-lg leading-relaxed text-gray-600 dark:text-gray-300"
+        >
+          Track applications, tailor your resume to each job with AI, prepare
+          for interviews, and see what is actually working.
         </motion.p>
 
-        <motion.div variants={fadeUp} className="flex items-center gap-3 mb-10">
-          <AvatarStack />
-        </motion.div>
-
-        <motion.div variants={fadeUp} className="flex items-center gap-4 flex-wrap justify-center mb-14">
-          <Button to="/dashboard" size="lg">
-            Start Optimizing Now <ArrowRight className="w-4 h-4" />
+        <motion.div variants={fadeUp} className="mb-16 flex flex-wrap items-center justify-center gap-4">
+          <Button to="/register" size="lg">
+            Create free account <ArrowRight className="h-4 w-4" />
           </Button>
-          <Button to="/optimizer" variant="secondary" size="lg">
-            Watch demo
+          <Button to="/login" variant="secondary" size="lg">
+            Sign in
           </Button>
-        </motion.div>
-
-        <motion.div variants={fadeUp} className="flex gap-10 flex-wrap justify-center mb-16">
-          {STATS.map(s => (
-            <div key={s.label} className="text-center">
-              <div className="text-2xl font-bold text-gray-900 dark:text-white">{s.value}</div>
-              <div className="text-xs text-gray-500 mt-0.5">{s.label}</div>
-            </div>
-          ))}
         </motion.div>
 
         <motion.div variants={fadeUp}>
@@ -82,49 +166,71 @@ export default function Home() {
         </motion.div>
       </motion.section>
 
+      {/* How it works */}
       <motion.section
         variants={containerVariants}
         initial="hidden"
         whileInView="show"
         viewport={{ once: true, amount: 0.2 }}
-        className="px-6 pb-24 max-w-5xl mx-auto"
+        className="mx-auto max-w-5xl px-6 pb-24"
       >
-        <p className="text-center text-xs text-gray-500 dark:text-gray-700 uppercase tracking-widest font-medium mb-10">
-          Everything you need to win your career
-        </p>
-        <div className="grid md:grid-cols-2 gap-5">
-          <motion.div variants={fadeUp}>
-            <FeatureCard
-              title="AI Resume Optimizer"
-              description="6 precision AI tools to audit, rewrite, and align your resume for any role. Beat ATS filters and impress recruiters in seconds."
-              icon={FileEdit}
-              tags={['Recruiter Audit', 'ATS Alignment', 'Achievement Conversion']}
-              to="/optimizer"
-              color="violet"
-            />
-          </motion.div>
-          <motion.div variants={fadeUp}>
-            <FeatureCard
-              title="Job Tracker"
-              description="Track every application, interview, and offer in one intelligent dashboard. Never lose track of your pipeline again."
-              icon={BarChart2}
-              tags={['Pipeline View', 'Status Tracking', 'Interview Notes']}
-              to="/tracker"
-              color="emerald"
-            />
-          </motion.div>
+        <div className="grid gap-5 md:grid-cols-3">
+          {STEPS.map((s) => (
+            <motion.div
+              key={s.step}
+              variants={fadeUp}
+              className="rounded-2xl border border-gray-200 bg-white p-6 dark:border-white/[0.06] dark:bg-white/[0.02]"
+            >
+              <div className="mb-3 text-xs font-semibold tracking-widest text-violet-600 dark:text-violet-400">
+                {s.step}
+              </div>
+              <h3 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
+                {s.title}
+              </h3>
+              <p className="text-sm leading-relaxed text-gray-500">{s.body}</p>
+            </motion.div>
+          ))}
         </div>
       </motion.section>
 
-      <section className="px-6 pb-28 max-w-4xl mx-auto text-center">
-        <h2 className="text-3xl md:text-4xl font-semibold mb-4">
-          Ready to take control of your career?
-        </h2>
-        <p className="text-gray-600 dark:text-gray-400 mb-8">
-          Stop guessing. Start optimizing. Land interviews faster.
+      {/* Modules */}
+      <motion.section
+        variants={containerVariants}
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, amount: 0.1 }}
+        className="mx-auto max-w-6xl px-6 pb-24"
+      >
+        <p className="mb-10 text-center text-xs font-medium uppercase tracking-widest text-gray-500 dark:text-gray-600">
+          Six connected modules, one workflow
         </p>
-        <Button to="/dashboard" size="lg">
-          Get Started Now <ArrowRight className="w-4 h-4" />
+
+        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          {FEATURES.map((feature) => (
+            <motion.div key={feature.title} variants={fadeUp}>
+              <FeatureCard {...feature} />
+            </motion.div>
+          ))}
+        </div>
+
+        <p className="mx-auto mt-10 max-w-2xl text-center text-sm leading-relaxed text-gray-500">
+          They share one source of truth. A job description you paste into the
+          tracker is what the resume analyser scores against, what interview
+          prep is generated from, and what your follow-up email refers to.
+        </p>
+      </motion.section>
+
+      {/* Close */}
+      <section className="mx-auto max-w-4xl px-6 pb-28 text-center">
+        <h2 className="mb-4 text-3xl font-semibold md:text-4xl">
+          Ready to take control of your search?
+        </h2>
+        <p className="mb-8 text-gray-600 dark:text-gray-400">
+          Free to use. Your data stays yours — every record is scoped to your
+          account.
+        </p>
+        <Button to="/register" size="lg">
+          Get started <ArrowRight className="h-4 w-4" />
         </Button>
       </section>
 
