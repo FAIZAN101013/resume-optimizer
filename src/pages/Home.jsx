@@ -7,12 +7,14 @@ import {
   CalendarDays,
   PieChart,
 } from 'lucide-react'
+import { lazy, Suspense } from 'react'
 import { motion } from 'framer-motion'
 
 import FeatureCard from '../components/FeatureCard'
 import Button from '../components/Button'
 import Footer from '../components/home/Footer'
 import DashboardPreview from '../components/home/DashboardPreview'
+import { useTheme } from '../context/ThemeContext'
 
 // What the product actually does, in the order you actually do it. This
 // replaced a row of invented statistics — no real numbers exist to quote yet,
@@ -98,6 +100,11 @@ const FEATURES = [
   },
 ]
 
+// Split out so ogl (the WebGL library) never lands in the main bundle. The
+// landing page is the only thing that uses it; someone signing straight in
+// should not download it.
+const GradientWaves = lazy(() => import('../components/home/GradientWaves'))
+
 const containerVariants = {
   hidden: {},
   show: { transition: { staggerChildren: 0.1 } },
@@ -109,14 +116,45 @@ const fadeUp = {
 }
 
 export default function Home() {
+  const { theme } = useTheme()
+  const isDark = theme === 'dark'
+
   return (
     <div className="relative min-h-screen overflow-hidden bg-white text-gray-900 transition-colors duration-300 dark:bg-[#0a0a0f] dark:text-white">
 
-      {/* Brand wash — purple to cyan, not the old violet/pink */}
-      <div className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute left-1/2 top-[-200px] h-[700px] w-[700px] -translate-x-1/2 rounded-full bg-violet-500/10 blur-[140px] dark:bg-violet-500/20" />
-        <div className="absolute bottom-[-200px] right-1/3 h-[600px] w-[600px] rounded-full bg-cyan-500/10 blur-[140px] dark:bg-cyan-500/20" />
+      {/* Animated wave field behind the hero, in the brand purple and cyan.
+          Masked so it dissolves rather than cutting off against the content
+          below, and pointer-events-none so it never eats a click. */}
+      <div
+        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[820px]"
+        style={{
+          maskImage: 'linear-gradient(to bottom, black 55%, transparent 100%)',
+          WebkitMaskImage: 'linear-gradient(to bottom, black 55%, transparent 100%)',
+        }}
+      >
+        <Suspense fallback={null}>
+          <GradientWaves
+            horizonColor="#7C3AED"
+            waveColor="#06B6D4"
+            crestColor="#FFFFFF"
+            speed={0.28}
+            amplitude={2.2}
+            waveScale={0.55}
+            tilt={1.16}
+            height={5.0}
+            fogDepth={13}
+            detail="medium"
+            // Lighter and more transparent on white, or it overpowers the text.
+            brightness={isDark ? 0.95 : 1.05}
+            opacity={isDark ? 0.62 : 0.4}
+            parallaxStrength={0.4}
+            grainIntensity={0.04}
+          />
+        </Suspense>
       </div>
+
+      {/* Keeps the headline legible wherever a crest happens to sit. */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[820px] bg-gradient-to-b from-white/70 via-white/40 to-transparent dark:from-[#0a0a0f]/70 dark:via-[#0a0a0f]/40" />
 
       {/* Hero */}
       <motion.section
@@ -170,8 +208,7 @@ export default function Home() {
       <motion.section
         variants={containerVariants}
         initial="hidden"
-        whileInView="show"
-        viewport={{ once: true, amount: 0.2 }}
+        animate="show"
         className="mx-auto max-w-5xl px-6 pb-24"
       >
         <div className="grid gap-5 md:grid-cols-3">
@@ -198,7 +235,7 @@ export default function Home() {
         variants={containerVariants}
         initial="hidden"
         whileInView="show"
-        viewport={{ once: true, amount: 0.1 }}
+        viewport={{ once: true, amount: 0.05, margin: '0px 0px -120px 0px' }}
         className="mx-auto max-w-6xl px-6 pb-24"
       >
         <p className="mb-10 text-center text-xs font-medium uppercase tracking-widest text-gray-500 dark:text-gray-600">
