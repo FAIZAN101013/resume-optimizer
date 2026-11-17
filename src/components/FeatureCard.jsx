@@ -44,7 +44,9 @@ export default function FeatureCard({
   return (
     <Link
       to={to}
-      className={`group flex flex-col rounded-2xl border border-gray-200 bg-white p-6 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl dark:border-white/[0.06] dark:bg-white/[0.02] ${v.hover}`}
+      // h-full matters: the grid stretches the wrapper, but without this the
+      // link sizes to its own content and the row ends up ragged.
+      className={`group flex h-full flex-col rounded-2xl border border-gray-200 bg-white p-6 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl dark:border-white/[0.06] dark:bg-white/[0.02] ${v.hover}`}
     >
       <div className={`mb-5 flex h-10 w-10 items-center justify-center rounded-xl ${v.icon}`}>
         <Icon className="h-5 w-5" strokeWidth={1.75} />
@@ -57,7 +59,7 @@ export default function FeatureCard({
       <p className="mb-5 text-sm leading-relaxed text-gray-500">{description}</p>
 
       {tags.length > 0 && (
-        <div className="mb-6 flex flex-wrap gap-2">
+        <div className="mb-6 flex flex-wrap content-start gap-2">
           {tags.map((tag) => (
             <span
               key={tag}
