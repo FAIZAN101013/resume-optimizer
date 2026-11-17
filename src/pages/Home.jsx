@@ -126,7 +126,7 @@ export default function Home() {
           Masked so it dissolves rather than cutting off against the content
           below, and pointer-events-none so it never eats a click. */}
       <div
-        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[820px]"
+        className="pointer-events-none absolute inset-x-0 top-0 z-0 h-[820px]"
         style={{
           maskImage: 'linear-gradient(to bottom, black 55%, transparent 100%)',
           WebkitMaskImage: 'linear-gradient(to bottom, black 55%, transparent 100%)',
@@ -154,14 +154,14 @@ export default function Home() {
       </div>
 
       {/* Keeps the headline legible wherever a crest happens to sit. */}
-      <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[820px] bg-gradient-to-b from-white/70 via-white/40 to-transparent dark:from-[#0a0a0f]/70 dark:via-[#0a0a0f]/40" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-0 h-[820px] bg-gradient-to-b from-white/70 via-white/40 to-transparent dark:from-[#0a0a0f]/70 dark:via-[#0a0a0f]/40" />
 
       {/* Hero */}
       <motion.section
         variants={containerVariants}
         initial="hidden"
         animate="show"
-        className="flex flex-col items-center px-6 pb-20 pt-20 text-center"
+        className="relative z-10 flex flex-col items-center px-6 pb-20 pt-20 text-center"
       >
         <motion.div
           variants={fadeUp}
@@ -209,7 +209,7 @@ export default function Home() {
         variants={containerVariants}
         initial="hidden"
         animate="show"
-        className="mx-auto max-w-5xl px-6 pb-24"
+        className="relative z-10 mx-auto max-w-5xl px-6 pb-24"
       >
         <div className="grid gap-5 md:grid-cols-3">
           {STEPS.map((s) => (
@@ -236,7 +236,7 @@ export default function Home() {
         initial="hidden"
         whileInView="show"
         viewport={{ once: true, amount: 0.05, margin: '0px 0px -120px 0px' }}
-        className="mx-auto max-w-6xl px-6 pb-24"
+        className="relative z-10 mx-auto max-w-6xl px-6 pb-24"
       >
         <p className="mb-10 text-center text-xs font-medium uppercase tracking-widest text-gray-500 dark:text-gray-600">
           Six connected modules, one workflow
@@ -244,7 +244,7 @@ export default function Home() {
 
         <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
           {FEATURES.map((feature) => (
-            <motion.div key={feature.title} variants={fadeUp}>
+            <motion.div key={feature.title} variants={fadeUp} className="h-full">
               <FeatureCard {...feature} />
             </motion.div>
           ))}
@@ -258,7 +258,7 @@ export default function Home() {
       </motion.section>
 
       {/* Close */}
-      <section className="mx-auto max-w-4xl px-6 pb-28 text-center">
+      <section className="relative z-10 mx-auto max-w-4xl px-6 pb-28 text-center">
         <h2 className="mb-4 text-3xl font-semibold md:text-4xl">
           Ready to take control of your search?
         </h2>
