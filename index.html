@@ -2,9 +2,36 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>resume-optimizer</title>
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
+
+    <title>JोBz — Track • Apply • Grow</title>
+    <meta
+      name="description"
+      content="AI-powered career management. Track applications, tailor your resume to each job, prepare for interviews and see what is working."
+    />
+
+    <!-- Browser chrome matches the app surface in each theme. -->
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0a0a0f" />
+
+    <meta property="og:title" content="JोBz — Track • Apply • Grow" />
+    <meta
+      property="og:description"
+      content="AI-powered career management for students, graduates and job seekers."
+    />
+    <meta property="og:type" content="website" />
+
+    <!-- Paints the correct background before React mounts, so a reload in dark
+         mode does not flash white. Runs before first paint, hence inline. -->
+    <script>
+      try {
+        var stored = localStorage.getItem('theme')
+        if (stored === 'dark') document.documentElement.classList.add('dark')
+      } catch (e) { /* private mode, storage unavailable */ }
+    </script>
   </head>
   <body>
     <div id="root"></div>
