@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
+import { FullScreenLoader } from "../components/common/Loader";
 
 const AuthContext = createContext();
 
@@ -110,7 +111,7 @@ export function AuthProvider({ children }) {
         sendWelcomeEmail,
       }}
     >
-      {!loading && children}
+      {loading ? <FullScreenLoader /> : children}
     </AuthContext.Provider>
   );
 }
