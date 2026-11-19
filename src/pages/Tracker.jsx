@@ -20,6 +20,7 @@ import FilterTabs from "../components/tracker/FilterTabs";
 import JobCard from "../components/tracker/JobCard";
 import ConfirmDialog from "../components/common/ConfirmDialog";
 import Button from "../components/Button";
+import { PageLoader } from '../components/common/Loader'
 
 export default function Tracker() {
   const [jobs, setJobs] = useState([]);
@@ -201,10 +202,7 @@ export default function Tracker() {
 
       {/* Job list */}
       {loading ? (
-        <div className="py-16 text-center text-gray-500 dark:text-gray-600">
-          <div className="mx-auto mb-3 h-5 w-5 animate-spin rounded-full border-2 border-violet-500/30 border-t-violet-500" />
-          <p className="text-sm">Loading applications…</p>
-        </div>
+        <PageLoader label="Loading applications" />
       ) : visibleJobs.length === 0 ? (
         <div className="py-16 text-center">
           {hasFilters ? (

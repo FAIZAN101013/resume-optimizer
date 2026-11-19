@@ -29,6 +29,7 @@ import {
   appliedJobs,
 } from '../lib/analytics'
 import { JOB_STATUSES } from '../lib/constants'
+import { PageLoader } from '../components/common/Loader'
 
 const RANGE_TABS = [
   { key: 'weekly', label: 'Weekly' },
@@ -65,9 +66,7 @@ export default function Analytics() {
 
   if (loading) {
     return (
-      <div className="flex h-64 items-center justify-center">
-        <div className="h-5 w-5 animate-spin rounded-full border-2 border-violet-500/30 border-t-violet-500" />
-      </div>
+      <PageLoader label="Loading your analytics" />
     )
   }
 

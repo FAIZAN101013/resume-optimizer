@@ -26,6 +26,7 @@ import {
 } from '../services/interviewService'
 import { listJobs, addActivity } from '../services/jobService'
 import { useProfile } from '../context/ProfileContext'
+import { PageLoader } from '../components/common/Loader'
 
 const TYPE_BADGE = {
   Phone: 'border-sky-500/20 bg-sky-500/10 text-sky-700 dark:text-sky-300',
@@ -297,9 +298,7 @@ export default function Interviews() {
       )}
 
       {loading ? (
-        <div className="flex h-40 items-center justify-center">
-          <div className="h-5 w-5 animate-spin rounded-full border-2 border-violet-500/30 border-t-violet-500" />
-        </div>
+        <PageLoader label="Loading interviews" />
       ) : visible.length === 0 ? (
         <div className="py-16 text-center">
           <CalendarDays className="mx-auto mb-3 h-8 w-8 opacity-30" strokeWidth={1.5} />

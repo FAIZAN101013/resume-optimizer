@@ -23,6 +23,7 @@ import { useProfile } from '../context/ProfileContext'
 import { useAuth } from '../context/AuthContext'
 import { buildResumeDocument } from '../lib/resumeDocument'
 import { createResume, listResumes, updateResume } from '../services/resumeService'
+import { PageLoader } from '../components/common/Loader'
 
 export default function Builder() {
   const { profile, loading } = useProfile()
@@ -136,9 +137,7 @@ export default function Builder() {
 
   if (loading || !doc) {
     return (
-      <div className="flex h-64 items-center justify-center">
-        <div className="h-5 w-5 animate-spin rounded-full border-2 border-violet-500/30 border-t-violet-500" />
-      </div>
+      <PageLoader label="Loading your resume" />
     )
   }
 

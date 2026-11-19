@@ -12,6 +12,7 @@ import RecentJobs from '../components/dashboard/RecentJobs'
 import UpcomingEvents from '../components/dashboard/UpcomingEvents'
 import ActivityFeed from '../components/dashboard/ActivityFeed'
 import ThemeToggle from '../components/ThemeToggle'
+import { PageLoader } from '../components/common/Loader'
 
 export default function Dashboard() {
   const [jobs, setJobs] = useState([])
@@ -53,9 +54,7 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="flex h-64 items-center justify-center">
-        <div className="h-5 w-5 animate-spin rounded-full border-2 border-violet-500/30 border-t-violet-500" />
-      </div>
+      <PageLoader label="Loading your dashboard" />
     )
   }
 

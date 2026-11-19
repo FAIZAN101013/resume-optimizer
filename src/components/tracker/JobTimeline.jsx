@@ -8,6 +8,7 @@ import {
   Circle,
 } from 'lucide-react'
 
+import Loader from '../common/Loader'
 import { listJobActivities } from '../../services/jobService'
 import { STATUS_BADGE } from '../../lib/constants'
 
@@ -65,7 +66,7 @@ export default function JobTimeline({ jobId }) {
   if (loading) {
     return (
       <div className="flex justify-center py-10">
-        <div className="h-5 w-5 animate-spin rounded-full border-2 border-violet-500/30 border-t-violet-500" />
+        <Loader size="md" />
       </div>
     )
   }
