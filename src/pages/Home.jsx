@@ -11,6 +11,7 @@ import { lazy, Suspense } from 'react'
 import { motion } from 'framer-motion'
 
 import FeatureCard from '../components/FeatureCard'
+import MaskButton from '../components/common/MaskButton'
 import Button from '../components/Button'
 import Footer from '../components/home/Footer'
 import DashboardPreview from '../components/home/DashboardPreview'
@@ -136,7 +137,9 @@ export default function Home() {
           <GradientWaves
             horizonColor="#7C3AED"
             waveColor="#06B6D4"
-            crestColor="#FFFFFF"
+            // White crests are invisible on a white page — in light mode the
+            // highlight has to be a mid tone to read at all.
+            crestColor={isDark ? '#FFFFFF' : '#8B5CF6'}
             speed={0.28}
             amplitude={2.2}
             waveScale={0.55}
@@ -144,9 +147,8 @@ export default function Home() {
             height={5.0}
             fogDepth={13}
             detail="medium"
-            // Lighter and more transparent on white, or it overpowers the text.
-            brightness={isDark ? 0.95 : 1.05}
-            opacity={isDark ? 0.62 : 0.4}
+            brightness={isDark ? 0.95 : 0.85}
+            opacity={isDark ? 0.62 : 0.78}
             parallaxStrength={0.4}
             grainIntensity={0.04}
           />
@@ -154,7 +156,9 @@ export default function Home() {
       </div>
 
       {/* Keeps the headline legible wherever a crest happens to sit. */}
-      <div className="pointer-events-none absolute inset-x-0 top-0 z-0 h-[820px] bg-gradient-to-b from-white/70 via-white/40 to-transparent dark:from-[#0a0a0f]/70 dark:via-[#0a0a0f]/40" />
+      {/* Just enough veil to keep the headline readable. At 70% it was
+          erasing the waves in light mode rather than softening them. */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-0 h-[820px] bg-gradient-to-b from-white/45 via-white/15 to-transparent dark:from-[#0a0a0f]/70 dark:via-[#0a0a0f]/40" />
 
       {/* Hero */}
       <motion.section
@@ -266,9 +270,11 @@ export default function Home() {
           Free to use. Your data stays yours — every record is scoped to your
           account.
         </p>
-        <Button to="/register" size="lg">
-          Get started <ArrowRight className="h-4 w-4" />
-        </Button>
+        <div className="flex justify-center">
+          <MaskButton to="/register" size="lg">
+            Get started
+          </MaskButton>
+        </div>
       </section>
 
       <Footer />
