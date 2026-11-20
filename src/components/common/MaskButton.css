@@ -1,0 +1,88 @@
+/* Sprite-mask hover effect, after the Codrops "transition effect with CSS
+   masks" article. A wide strip of mask frames is stepped through with
+   animation-timing-function: steps(), which reads as a dissolve.
+
+   The sprite is 14400x270 — 30 frames of 480px — so the mask is sized to
+   3000% and stepped 29 times, one transition per frame boundary. Those three
+   numbers are locked together: change the sprite and all three must change. */
+
+.mask-btn {
+  position: relative;
+  cursor: pointer;
+  display: inline-flex;
+  overflow: hidden;
+  border-radius: 12px;
+  isolation: isolate;
+}
+
+/* Sits underneath, and is what shows through wherever the mask has cleared
+   the filled layer away. */
+.mask-btn__under {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.mask-btn__fill {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 101%; /* hides a hairline the mask can leave at the right edge */
+  white-space: nowrap;
+  color: #fff;
+  background: linear-gradient(90deg, #7c3aed, #06b6d4);
+
+  -webkit-mask-image: url('/masks/urban-sprite.png');
+  mask-image: url('/masks/urban-sprite.png');
+  -webkit-mask-size: 3000% 100%;
+  mask-size: 3000% 100%;
+  -webkit-mask-position: 0 0;
+  mask-position: 0 0;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+
+  animation: mask-settle 0.7s steps(29) forwards;
+}
+
+/* Driven from the interactive parent, not the span: a span is never focusable,
+   so :focus-visible on the fill itself would never fire and keyboard users
+   would get no feedback at all. */
+.mask-btn:hover .mask-btn__fill,
+.mask-btn:focus-visible .mask-btn__fill {
+  animation: mask-sweep 0.7s steps(29) forwards;
+}
+
+.mask-btn:focus-visible {
+  outline: 2px solid #7c3aed;
+  outline-offset: 3px;
+}
+
+@keyframes mask-sweep {
+  from { -webkit-mask-position: 0 0;    mask-position: 0 0; }
+  to   { -webkit-mask-position: 100% 0; mask-position: 100% 0; }
+}
+
+@keyframes mask-settle {
+  from { -webkit-mask-position: 100% 0; mask-position: 100% 0; }
+  to   { -webkit-mask-position: 0 0;    mask-position: 0 0; }
+}
+
+/* The effect is decorative. Without this the button dissolves on load and on
+   every hover for someone who asked the OS to stop exactly that. */
+@media (prefers-reduced-motion: reduce) {
+  .mask-btn__fill,
+  .mask-btn:hover .mask-btn__fill,
+  .mask-btn:focus-visible .mask-btn__fill {
+    animation: none;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+}
