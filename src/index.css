@@ -16,6 +16,20 @@
   transform-origin: bottom right;
 }
 
+/* Indeterminate progress bar for the startup loader. */
+@keyframes loaderSweep {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(300%); }
+}
+
+.loader-bar {
+  animation: loaderSweep 1.1s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loader-bar { animation: none; width: 100%; opacity: 0.5; }
+}
+
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(12px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -56,32 +70,51 @@ html.dark body {
 }
 
 @media print {
-  /* Print the sheet and nothing else. Visibility rather than display so the
-     sheet's ancestors stay in the layout and it isn't detached. */
-  body * {
-    visibility: hidden !important;
+  /* Collapse everything that is not on the path to the sheet.
+     display:none, not visibility:hidden — hidden keeps the layout box, so the
+     sidebar and editor still reserved their space, pushing the resume to the
+     bottom of page one and spilling a blank page two. */
+  body *:not(:has(.resume-sheet)):not(.resume-sheet):not(.resume-sheet *) {
+    display: none !important;
   }
 
-  .resume-sheet,
-  .resume-sheet * {
-    visibility: visible !important;
-  }
-
-  .resume-sheet {
-    position: absolute !important;
-    left: 0;
-    top: 0;
-    width: 100% !important;
+  /* The ancestor chain. Strip anything that sizes, scales or positions the
+     sheet — in particular transform, which creates a containing block and
+     silently breaks absolute positioning inside it. */
+  body :has(.resume-sheet) {
+    display: block !important;
+    position: static !important;
+    transform: none !important;
+    width: auto !important;
+    max-width: none !important;
+    height: auto !important;
+    max-height: none !important;
     min-height: 0 !important;
+    overflow: visible !important;
     margin: 0 !important;
     padding: 0 !important;
-    border: none !important;
-    border-radius: 0 !important;
+    border: 0 !important;
+    background: none !important;
     box-shadow: none !important;
   }
 
-  /* Never break a role or project across pages mid-entry. */
+  .resume-sheet {
+    position: static !important;
+    width: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    /* @page supplies the margin; keeping padding here would double it. */
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  /* Never split a role or project across a page break. */
   .resume-sheet section,
+  .resume-sheet li,
   .resume-sheet article > header {
     break-inside: avoid;
   }
