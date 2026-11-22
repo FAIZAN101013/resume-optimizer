@@ -195,9 +195,9 @@ export default function Home() {
         </motion.p>
 
         <motion.div variants={fadeUp} className="mb-16 flex flex-wrap items-center justify-center gap-4">
-          <Button to="/register" size="lg">
+          <MaskButton to="/register" size="lg">
             Create free account <ArrowRight className="h-4 w-4" />
-          </Button>
+          </MaskButton>
           <Button to="/login" variant="secondary" size="lg">
             Sign in
           </Button>
@@ -270,11 +270,9 @@ export default function Home() {
           Free to use. Your data stays yours — every record is scoped to your
           account.
         </p>
-        <div className="flex justify-center">
-          <MaskButton to="/register" size="lg">
-            Get started
-          </MaskButton>
-        </div>
+        <MaskButton to="/register" size="lg">
+          Get started <ArrowRight className="h-4 w-4" />
+        </MaskButton>
       </section>
 
       <Footer />
