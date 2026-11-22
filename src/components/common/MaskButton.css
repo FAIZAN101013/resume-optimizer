@@ -11,7 +11,7 @@
   cursor: pointer;
   display: inline-flex;
   overflow: hidden;
-  border-radius: 12px;
+  border-radius: 0.75rem; /* rounded-xl, same as Button */
   isolation: isolate;
 }
 
