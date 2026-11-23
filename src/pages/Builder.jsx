@@ -17,7 +17,8 @@ import Button from '../components/Button'
 import ThemeToggle from '../components/ThemeToggle'
 import BuilderForm from '../components/builder/BuilderForm'
 import AiReviewPanel from '../components/builder/AiReviewPanel'
-import { THEMES, getTheme } from '../components/builder/themes'
+import { getTheme } from '../components/builder/themes'
+import TemplateGallery from '../components/builder/TemplateGallery'
 
 import { useProfile } from '../context/ProfileContext'
 import { useAuth } from '../context/AuthContext'
@@ -37,7 +38,9 @@ export default function Builder() {
   const [themeKey, setThemeKey] = useState(
     () => localStorage.getItem('jobz:resume-theme') || 'classic',
   )
-  const [showTemplates, setShowTemplates] = useState(false)
+  // Two stages: pick a template, then edit in it. Landing straight in the
+  // editor gave no sense that other templates existed.
+  const [stage, setStage] = useState('gallery')
   const [showReview, setShowReview] = useState(true)
 
   // A4 at 96dpi. The sheet renders at full size and is scaled down to fit,
@@ -84,6 +87,11 @@ export default function Builder() {
 
   const theme = getTheme(themeKey)
   const ThemeComponent = theme.component
+
+  function chooseTemplate(key) {
+    setThemeKey(key)
+    setStage('editor')
+  }
 
   const handlePrint = useCallback(() => window.print(), [])
 
@@ -141,6 +149,35 @@ export default function Builder() {
     )
   }
 
+  if (stage === 'gallery') {
+    return (
+      <div className="mx-auto max-w-6xl">
+        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+              Choose a template
+            </h1>
+            <p className="mt-0.5 text-sm text-gray-500">
+              Each preview shows your own details, so you can see the real thing
+              before you commit to one.
+            </p>
+          </div>
+          <ThemeToggle />
+        </div>
+
+        {gaps.length > 0 && (
+          <div className="mb-6 flex items-start gap-2 rounded-lg border border-amber-500/20 bg-amber-500/10 px-3 py-2.5 text-sm text-amber-700 dark:text-amber-300">
+            <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+            Your profile is missing {gaps.join(' and ')} — the previews will look
+            sparse until you add them.
+          </div>
+        )}
+
+        <TemplateGallery doc={doc} selected={themeKey} onSelect={chooseTemplate} />
+      </div>
+    )
+  }
+
   return (
     <div className="mx-auto max-w-[1600px]">
 
@@ -184,7 +221,7 @@ export default function Builder() {
 
           <button
             type="button"
-            onClick={() => setShowTemplates((v) => !v)}
+            onClick={() => setStage('gallery')}
             className="flex items-center gap-1.5 rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-600 transition-all hover:border-gray-300 hover:text-gray-900 dark:border-white/[0.08] dark:text-gray-400 dark:hover:text-white"
           >
             <LayoutTemplate className="h-3.5 w-3.5" strokeWidth={1.75} />
@@ -215,36 +252,6 @@ export default function Builder() {
           </Button>
         </div>
       </div>
-
-      {/* Template picker */}
-      {showTemplates && (
-        <div className="mb-5 grid grid-cols-2 gap-3 rounded-xl border border-gray-200 bg-white p-3 dark:border-white/[0.06] dark:bg-white/[0.02] lg:grid-cols-4">
-          {THEMES.map((t) => (
-            <button
-              key={t.key}
-              type="button"
-              onClick={() => { setThemeKey(t.key); setShowTemplates(false) }}
-              className={`rounded-lg border p-3 text-left transition-all ${
-                themeKey === t.key
-                  ? 'border-violet-500/40 bg-violet-500/[0.08]'
-                  : 'border-gray-200 hover:border-gray-300 dark:border-white/[0.06] dark:hover:border-white/[0.1]'
-              }`}
-            >
-              <div className="flex items-center justify-between gap-2">
-                <span className="text-sm font-medium text-gray-900 dark:text-white">{t.name}</span>
-                {t.atsSafe ? (
-                  <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-emerald-500" />
-                ) : (
-                  <ShieldAlert className="h-3.5 w-3.5 shrink-0 text-amber-500" />
-                )}
-              </div>
-              <p className="mt-1 text-[11px] leading-relaxed text-gray-500 dark:text-white/35">
-                {t.description}
-              </p>
-            </button>
-          ))}
-        </div>
-      )}
 
       {/* Messages */}
       {error && (
