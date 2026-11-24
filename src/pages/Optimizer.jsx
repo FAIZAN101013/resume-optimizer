@@ -36,6 +36,8 @@ import { analyzeResume } from '../services/aiService'
 import { useProfile } from '../context/ProfileContext'
 import { parseResumeText, sectionsToText } from '../lib/resumeParser'
 import { REWRITABLE_SECTIONS } from '../lib/constants'
+import { useDraft } from '../hooks/useDraft'
+import Modal from '../components/common/Modal'
 
 const TABS = [
   { key: 'analyze', label: 'Analyse', icon: ScanSearch },
@@ -59,15 +61,18 @@ export default function Optimizer() {
   const [jobs, setJobs] = useState([])
   const [resumes, setResumes] = useState([])
 
-  const [resumeText, setResumeText] = useState('')
-  const [jobDescription, setJobDescription] = useState('')
-  const [targetRole, setTargetRole] = useState('')
-  const [selectedJobId, setSelectedJobId] = useState(null)
+  // Drafts, not component state: switching to the builder and back used to
+  // discard a pasted resume and job description without warning.
+  const [resumeText, setResumeText] = useDraft('optimizer:resume', '')
+  const [jobDescription, setJobDescription] = useDraft('optimizer:jd', '')
+  const [targetRole, setTargetRole] = useDraft('optimizer:role', '')
+  const [selectedJobId, setSelectedJobId] = useDraft('optimizer:jobId', null)
 
   const [activeResume, setActiveResume] = useState(null)
   const [pendingFile, setPendingFile] = useState(null)
 
-  const [analysis, setAnalysis] = useState(null)
+  const [analysis, setAnalysis] = useDraft('optimizer:analysis', null)
+  const [showResults, setShowResults] = useState(false)
   const [analyzing, setAnalyzing] = useState(false)
   const [saving, setSaving] = useState(false)
   const [busyId, setBusyId] = useState(null)
@@ -150,6 +155,7 @@ export default function Optimizer() {
       })
 
       setAnalysis(result)
+      setShowResults(true)
 
       // Persist only when there's a resume row to attach it to. Without one
       // the analysis is still shown — it just isn't part of the history yet.
@@ -407,8 +413,25 @@ export default function Optimizer() {
             )}
           </div>
 
-          {analysis && (
-            <AnalysisReport analysis={analysis} onAddKeyword={handleAddKeyword} />
+          {analysis && !showResults && (
+            <button
+              type="button"
+              onClick={() => setShowResults(true)}
+              className="flex w-full items-center justify-between gap-4 rounded-xl border border-violet-500/25 bg-violet-500/[0.06] px-5 py-4 text-left transition-colors hover:bg-violet-500/[0.1]"
+            >
+              <div>
+                <p className="text-sm font-semibold text-gray-900 dark:text-white">
+                  Your last analysis is ready
+                </p>
+                <p className="mt-0.5 text-xs text-gray-500 dark:text-white/35">
+                  {analysis.overall_score}/100 overall ·{' '}
+                  {analysis.missing_keywords?.length || 0} missing keywords
+                </p>
+              </div>
+              <span className="shrink-0 text-sm font-medium text-violet-600 dark:text-violet-400">
+                View report →
+              </span>
+            </button>
           )}
         </div>
       )}
@@ -463,6 +486,17 @@ export default function Optimizer() {
           onDownload={handleDownload}
           busyId={busyId}
         />
+      )}
+
+      {analysis && showResults && (
+        <Modal
+          title="Resume analysis"
+          subtitle={targetRole ? `Against ${targetRole}` : 'Against the job description provided'}
+          size="xl"
+          onClose={() => setShowResults(false)}
+        >
+          <AnalysisReport analysis={analysis} onAddKeyword={handleAddKeyword} />
+        </Modal>
       )}
 
       {pendingDelete && (
