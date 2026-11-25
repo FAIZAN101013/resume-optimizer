@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
+  ArrowLeft,
   Printer,
   Save,
   AlertCircle,
@@ -24,23 +25,24 @@ import { useProfile } from '../context/ProfileContext'
 import { useAuth } from '../context/AuthContext'
 import { buildResumeDocument } from '../lib/resumeDocument'
 import { createResume, listResumes, updateResume } from '../services/resumeService'
+import { useDraft } from '../hooks/useDraft'
 import { PageLoader } from '../components/common/Loader'
 
 export default function Builder() {
   const { profile, loading } = useProfile()
   const { user } = useAuth()
 
-  const [doc, setDoc] = useState(null)
-  const [resumeId, setResumeId] = useState(null)
-  const [resumeName, setResumeName] = useState('My Resume')
+  // Drafts: leaving for the tracker and coming back used to discard every
+  // edit made here and reseed from the profile.
+  const [doc, setDoc] = useDraft('builder:doc', null)
+  const [resumeId, setResumeId] = useDraft('builder:id', null)
+  const [resumeName, setResumeName] = useDraft('builder:name', 'My Resume')
   const [renaming, setRenaming] = useState(false)
 
-  const [themeKey, setThemeKey] = useState(
-    () => localStorage.getItem('jobz:resume-theme') || 'classic',
-  )
+  const [themeKey, setThemeKey] = useDraft('builder:theme', 'classic')
   // Two stages: pick a template, then edit in it. Landing straight in the
   // editor gave no sense that other templates existed.
-  const [stage, setStage] = useState('gallery')
+  const [stage, setStage] = useState(() => (localStorage.getItem('jobz:draft:builder:doc') ? 'editor' : 'gallery'))
   const [showReview, setShowReview] = useState(true)
 
   // A4 at 96dpi. The sheet renders at full size and is scaled down to fit,
@@ -55,10 +57,6 @@ export default function Builder() {
   const [savedAt, setSavedAt] = useState(null)
   const [notice, setNotice] = useState('')
   const [error, setError] = useState('')
-
-  useEffect(() => {
-    localStorage.setItem('jobz:resume-theme', themeKey)
-  }, [themeKey])
 
   // Measure rather than hardcode: a fixed scale overflows on narrow columns
   // and wastes space on wide ones.
@@ -162,7 +160,14 @@ export default function Builder() {
               before you commit to one.
             </p>
           </div>
-          <ThemeToggle />
+          <div className="flex items-center gap-3">
+            <ThemeToggle />
+            {doc && (
+              <Button variant="secondary" onClick={() => setStage('editor')}>
+                Back to editing
+              </Button>
+            )}
+          </div>
         </div>
 
         {gaps.length > 0 && (
@@ -182,6 +187,15 @@ export default function Builder() {
     <div className="mx-auto max-w-[1600px]">
 
       {/* Header */}
+      <button
+        type="button"
+        onClick={() => setStage('gallery')}
+        className="mb-4 flex items-center gap-2 text-sm text-gray-500 transition-colors hover:text-gray-900 dark:hover:text-white"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        All templates
+      </button>
+
       <div className="mb-5 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex min-w-0 items-center gap-2">
           {renaming ? (
@@ -222,8 +236,10 @@ export default function Builder() {
           <button
             type="button"
             onClick={() => setStage('gallery')}
+            title="Back to templates"
             className="flex items-center gap-1.5 rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-600 transition-all hover:border-gray-300 hover:text-gray-900 dark:border-white/[0.08] dark:text-gray-400 dark:hover:text-white"
           >
+            <ArrowLeft className="h-3.5 w-3.5" strokeWidth={1.75} />
             <LayoutTemplate className="h-3.5 w-3.5" strokeWidth={1.75} />
             {theme.name}
           </button>
