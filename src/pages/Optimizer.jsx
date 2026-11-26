@@ -37,6 +37,7 @@ import { useProfile } from '../context/ProfileContext'
 import { parseResumeText, sectionsToText } from '../lib/resumeParser'
 import { REWRITABLE_SECTIONS } from '../lib/constants'
 import { useDraft } from '../hooks/useDraft'
+import { takeResumeText } from '../lib/handoff'
 import Modal from '../components/common/Modal'
 
 const TABS = [
@@ -97,6 +98,16 @@ export default function Optimizer() {
   }, [])
 
   useEffect(() => {
+    // A resume handed over from the builder. Taking clears the stash, so it
+    // only ever applies once and never overwrites later typing.
+    const handed = takeResumeText()
+    if (handed) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setResumeText(handed)
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setNotice('Loaded from the Resume Builder — pick a job to score it against.')
+    }
+
     // eslint-disable-next-line react-hooks/set-state-in-effect
     loadData().then((jobList) => {
       // Deep link from the tracker: /optimizer?job=<id>

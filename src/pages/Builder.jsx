@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
   ArrowLeft,
   Printer,
+  ScanSearch,
   Save,
   AlertCircle,
   Check,
@@ -26,9 +28,11 @@ import { useAuth } from '../context/AuthContext'
 import { buildResumeDocument } from '../lib/resumeDocument'
 import { createResume, listResumes, updateResume } from '../services/resumeService'
 import { useDraft } from '../hooks/useDraft'
+import { stashResumeText } from '../lib/handoff'
 import { PageLoader } from '../components/common/Loader'
 
 export default function Builder() {
+  const navigate = useNavigate()
   const { profile, loading } = useProfile()
   const { user } = useAuth()
 
@@ -92,6 +96,13 @@ export default function Builder() {
   }
 
   const handlePrint = useCallback(() => window.print(), [])
+
+  // Hands the built resume to the optimizer as text, so scoring it against a
+  // job doesn't mean copy-pasting between two pages of the same app.
+  function scoreAgainstJob() {
+    stashResumeText(toPlainText(doc))
+    navigate('/optimizer?from=builder')
+  }
 
   function resetFromProfile() {
     setDoc(buildResumeDocument(profile, user))
@@ -256,6 +267,11 @@ export default function Builder() {
               <PanelRightOpen className="h-3.5 w-3.5" strokeWidth={1.75} />
             )}
           </button>
+
+          <Button variant="secondary" onClick={scoreAgainstJob}>
+            <ScanSearch className="h-3.5 w-3.5" />
+            Score vs job
+          </Button>
 
           <Button variant="secondary" onClick={handleSave} disabled={saving}>
             <Save className="h-3.5 w-3.5" />
