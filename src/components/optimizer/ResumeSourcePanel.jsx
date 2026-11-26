@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { Upload, FileText, Loader2, AlertCircle } from 'lucide-react'
 
 import Card from '../common/Card'
@@ -111,6 +112,13 @@ export default function ResumeSourcePanel({ text, onTextChange, onFileParsed }) 
         placeholder="Paste your resume here, or upload a file above…"
         className={`${fieldClasses} resize-none leading-relaxed scrollbar-none`}
       />
+
+      <p className="mt-2 text-[11px] text-gray-400 dark:text-white/25">
+        No resume yet?{' '}
+        <Link to="/builder" className="text-violet-600 hover:underline dark:text-violet-400">
+          Build one from your profile →
+        </Link>
+      </p>
     </Card>
   )
 }
