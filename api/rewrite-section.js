@@ -1,4 +1,4 @@
-import { generateText, sendAiError } from './_gemini.js'
+import { aiText, sendAiError } from './_providers.js'
 
 // The hard rule for this route: rewriting may change wording, order and
 // emphasis. It may never add a fact that was not in the input.
@@ -86,13 +86,16 @@ ${INTEGRITY_RULES}
 Return only the rewritten text. No preamble, no markdown fences, no commentary.`
 
   try {
-    const rewritten = await generateText({
+    // Short prose suits the fast providers; Gemini is the safety net.
+    const { text: rewritten, provider } = await aiText({
       prompt,
       temperature: 0.4,
       maxOutputTokens: 2048,
+      providers: ['groq', 'mistral', 'gemini'],
     })
 
     return res.status(200).json({
+      provider,
       section,
       original: content || '',
       rewritten,

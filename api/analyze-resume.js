@@ -1,4 +1,4 @@
-import { generateJson, sendAiError } from './_gemini.js'
+import { aiJson, sendAiError } from './_providers.js'
 
 // Gemini responseSchema (OpenAPI subset). Forcing this shape is what lets the
 // UI render scores and keyword lists without defensive parsing.
@@ -146,16 +146,20 @@ export default async function handler(req, res) {
   }
 
   try {
-    const result = await generateJson({
+    // Strict-schema JSON is Gemini's strength; the others are fallbacks for
+    // rate limits and outages.
+    const { data: result, provider } = await aiJson({
       prompt: buildPrompt(resumeText, jobDescription, targetRole),
       schema: SCHEMA,
       temperature: 0.2,
       maxOutputTokens: 6144,
+      providers: ['gemini', 'groq', 'openrouter'],
     })
 
     const breakdown = result.breakdown || {}
 
     return res.status(200).json({
+      provider,
       overall_score: clamp(result.overall_score),
       ats_score: clamp(result.ats_score),
       score_reasoning: result.score_reasoning || '',

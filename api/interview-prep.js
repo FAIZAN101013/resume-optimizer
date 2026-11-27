@@ -1,4 +1,4 @@
-import { generateJson, sendAiError } from './_gemini.js'
+import { aiJson, sendAiError } from './_providers.js'
 
 const QUESTION_LIST = {
   type: 'ARRAY',
@@ -83,14 +83,18 @@ ${interviewType ? `Weight the material towards a ${interviewType} interview.` : 
 Return only the structured JSON.`
 
   try {
-    const result = await generateJson({
+    // The largest response in the app — Groq's free tier has the tightest
+    // per-minute token budget, so it goes last.
+    const { data: result, provider } = await aiJson({
       prompt,
       schema: SCHEMA,
       temperature: 0.4,
       maxOutputTokens: 8192,
+      providers: ['gemini', 'openrouter', 'groq'],
     })
 
     return res.status(200).json({
+      provider,
       technical: result.technical || [],
       behavioral: result.behavioral || [],
       hr: result.hr || [],

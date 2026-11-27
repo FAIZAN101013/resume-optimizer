@@ -1,4 +1,4 @@
-import { generateJson, sendAiError } from './_gemini.js'
+import { aiJson, sendAiError } from './_providers.js'
 
 // Reviews the resume on its own terms — no job description. This is the
 // "is this a good resume" pass, as opposed to analyze-resume.js which asks
@@ -107,11 +107,12 @@ strong, return fewer rather than padding.
 Return only the structured JSON.`
 
   try {
-    const result = await generateJson({
+    const { data: result, provider } = await aiJson({
       prompt,
       schema: SCHEMA,
       temperature: 0.25,
       maxOutputTokens: 6144,
+      providers: ['gemini', 'groq', 'openrouter'],
     })
 
     const suggestions = (result.suggestions || []).map((s, i) => ({
@@ -126,6 +127,7 @@ Return only the structured JSON.`
     }))
 
     return res.status(200).json({
+      provider,
       overall: {
         score: Math.max(0, Math.min(100, Math.round(Number(result.overall?.score) || 0))),
         summary: result.overall?.summary || '',

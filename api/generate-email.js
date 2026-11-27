@@ -1,5 +1,7 @@
-// Serverless email generator. The AI key stays server-side — it is never
+// Serverless email generator. The AI keys stay server-side — they are never
 // shipped to the browser.
+
+import { aiText, AiNotConfiguredError } from './_providers.js'
 
 const TONE = `
 Write in a warm, professional, human tone. Keep it to 3-5 short sentences.
@@ -87,61 +89,27 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: `Unknown email type: ${type}` })
   }
 
-  const apiKey = process.env.GEMINI_API_KEY
-
-  // No key configured — say so plainly rather than passing a canned template
-  // off as an AI draft.
-  if (!apiKey) {
-    return res.status(200).json({
-      email: fallbackEmail(type, job),
-      isFallback: true,
-      fallbackReason: 'AI is not configured on the server (GEMINI_API_KEY is missing).',
-    })
-  }
-
   try {
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: { temperature: 0.7, maxOutputTokens: 700 },
-        }),
-      },
-    )
+    // Emails are short and frequent — the fast providers lead, Gemini backs
+    // them up, and the canned template is the honest last resort.
+    const { text: email, provider } = await aiText({
+      prompt,
+      temperature: 0.7,
+      maxOutputTokens: 700,
+      providers: ['groq', 'mistral', 'gemini'],
+    })
 
-    const responseText = await response.text()
-
-    if (!response.ok) {
-      console.error('Gemini error:', response.status, responseText)
-      return res.status(200).json({
-        email: fallbackEmail(type, job),
-        isFallback: true,
-        fallbackReason: 'The AI service is temporarily unavailable.',
-      })
-    }
-
-    const data = JSON.parse(responseText)
-    const email = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || ''
-
-    // An empty completion is a failure, not a success with no content.
-    if (!email) {
-      return res.status(200).json({
-        email: fallbackEmail(type, job),
-        isFallback: true,
-        fallbackReason: 'The AI returned an empty response.',
-      })
-    }
-
-    return res.status(200).json({ email, isFallback: false })
+    return res.status(200).json({ email, isFallback: false, provider })
   } catch (err) {
-    console.error('generate-email failed:', err)
+    console.error('generate-email failed:', err.message)
+
     return res.status(200).json({
       email: fallbackEmail(type, job),
       isFallback: true,
-      fallbackReason: 'Could not reach the AI service.',
+      fallbackReason:
+        err instanceof AiNotConfiguredError
+          ? 'No AI provider is configured on the server.'
+          : 'The AI services are temporarily unavailable.',
     })
   }
 }
