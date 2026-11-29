@@ -1,0 +1,52 @@
+name: Keep Supabase alive
+
+# Supabase pauses free-tier projects after ~7 days without database activity.
+# Two pings a week keeps the worst-case gap at 4 days — deliberately not 5-6,
+# because GitHub cron is best-effort and can run late or skip under load, and
+# one late run that close to the line is exactly how projects get paused.
+#
+# Needs two repository secrets (Settings -> Secrets and variables -> Actions):
+#   SUPABASE_URL       e.g. https://xxxx.supabase.co
+#   SUPABASE_ANON_KEY  the anon key (already public by design; RLS does the
+#                      protecting — the query below just returns an empty set)
+
+on:
+  schedule:
+    # 09:17 UTC Monday and Thursday. Off the top of the hour on purpose —
+    # :00 crons are the most congested slot and the most likely to be skipped.
+    - cron: '17 9 * * 1,4'
+  # Manual run, for testing that the secrets are wired up.
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+
+    steps:
+      - name: Query the database
+        run: |
+          if [ -z "${{ secrets.SUPABASE_URL }}" ]; then
+            echo "::error::SUPABASE_URL secret is not set"
+            exit 1
+          fi
+
+          # A real REST query against a table — this reaches Postgres, which
+          # is what counts as activity. An auth/health ping would not.
+          status=$(curl -s -o /tmp/body -w "%{http_code}" \
+            "${{ secrets.SUPABASE_URL }}/rest/v1/profiles?select=id&limit=1" \
+            -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}")
+
+          echo "HTTP $status"
+
+          # Fail loudly on anything but success, so a rotated key or a paused
+          # project shows up as a red run and an email — not as silence
+          # followed by a paused database.
+          if [ "$status" -lt 200 ] || [ "$status" -ge 300 ]; then
+            echo "::error::Supabase ping failed with HTTP $status"
+            cat /tmp/body
+            exit 1
+          fi
+
+          echo "Supabase is awake."
